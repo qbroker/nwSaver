@@ -3,7 +3,7 @@ Save TiddlyWiki classic in nw.js
 
 Steps to install a TWc in nw.js environment, support for Linux and Windows.
 
-1. Download nw.js for your OS, sdk or normal, both will work, https://nwjs.io/dowloads 
+1. Download nw.js for your OS, sdk or normal, both will work, https://nwjs.io 
 2. Unzip the downloaded file, you will have a folder like: xxx/nwjs-sdk-v0.38.1-linux-x64 
 3. Download the files from Github, the green button "Clone or download"
 4. Unzip the downloaded nwTWcSaver-master.zip 
