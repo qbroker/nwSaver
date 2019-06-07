@@ -1,0 +1,14 @@
+{ 
+  "main": "./data/nwSaver.html",
+  "name": "nw.js TWc demo",
+  "version": "0.0.1",
+  "window": {
+    "title": "nwSaver DEMO",
+    "toolbar": false,
+    "frame": true,
+    "width": 1400,
+    "height": 800,
+    "min_width": 400,
+    "min_height": 200    
+  }
+}
