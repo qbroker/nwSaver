@@ -1,7 +1,7 @@
 # nwTWcSaver
 Save TiddlyWiki classic in nw.js
 
-##Steps to install a TWc in nw.js environment, support for Linux and Windows.
+## Steps to install a TWc in nw.js environment
 
 *This readme uses Linux if you are on Windows read Windows were Linux is used.*
 
@@ -18,19 +18,20 @@ Save TiddlyWiki classic in nw.js
 11. If your tiddlers only have view mode, save and reload once 
 
 ## TWc information
-*The TWc nwSaver.html in this repo has the plugin loaded and works out of the box
-*To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename main in package.json
-*The save macro can be added to SideBarOptions like ```<<nwsaver>>```
-*Now you should have a TWc that can save
-*You need use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
+* The TWc nwSaver.html in this repo has the plugin loaded and works out of the box
+* To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename main in package.json
+* The save macro can be added to SideBarOptions like ```<<nwsaver>>```
+* Now you should have a TWc that can save
+* You need use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
 
-##nw.js
-*In package.json the path to the wiki is defined in "main": "./data/nwSaver.html"
-*If you edit package.json make sure to be accurate, any typo causes a failure during startup
+## nw.js
+* In package.json the path to the wiki is defined in "main": "./data/nwSaver.html"
+* If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
-##Roadmap
-*Switch to a frameless window, all chrome is set on TWc
-*Publish TWcHive, so you can start multiple TWc's from one TWc
+## Roadmap
+* Switch to a frameless window, all chrome is set on TWc
+* Publish TWcHive, so you can start multiple TWc's from one TWc
+
 
 
 Have a nice day, Okido
