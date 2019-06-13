@@ -11,7 +11,7 @@ Save TiddlyWiki classic in nw.js
 4. Unzip the downloaded nwTWcSaver-master.zip 
 5. Copy package.json from nwTWcSaver-master to xxx/nwjs-sdk-v0.38.1-linux-x64
 6. Create a folder named data in xxx/nwjs-sdk-v0.38.1-linux-x64, so you get xxx/nwjs-sdk-v0.38.1-linux-x64/data
-7. Copy nwSaver.html and nwTWcSaver.js from nwTWcSaver-master to xxx/nwjs-sdk-v0.38.1-linux-x64/data
+7. Copy nwSaver.html from nwTWcSaver-master to xxx/nwjs-sdk-v0.38.1-linux-x64/data
 8. On Linux execute nw in the folder xxx/nwjs-sdk-v0.38.1-linux-x64
 9. On Windows execute nw.exe in the folder xxx/nwjs-sdk-v0.38.1-linux-x64
 10. nw.js should start and give you TWc
@@ -19,7 +19,7 @@ Save TiddlyWiki classic in nw.js
 
 ## TWc information
 * The TWc nwSaver.html in this repo has the plugin loaded and works out of the box
-* To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename main in package.json
+* To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename "main" in package.json
 * The save macro can be added to SideBarOptions like ```<<nwsaver>>```
 * Now you should have a TWc that can save
 * You need use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
@@ -29,7 +29,7 @@ Save TiddlyWiki classic in nw.js
 * If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
 ## Roadmap
-* Switch to a frameless window, all chrome is set on TWc
+* Switch to a frameless window, all chrome is set in TWc
 * Publish TWcHive, so you can start multiple TWc's from one TWc
 
 
