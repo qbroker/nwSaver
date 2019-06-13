@@ -529,28 +529,28 @@ noscript {display:none;} /* Fixes a feature in Firefox 1.5.0.2 where print previ
 <div title="SideBarOptions" creator="Okido" modifier="Okido" created="201904151324" modified="201904151329" changecount="3">
 <pre>&lt;&lt;search&gt;&gt;&lt;&lt;closeAll&gt;&gt;&lt;&lt;permaview&gt;&gt;&lt;&lt;newTiddler&gt;&gt;&lt;&lt;newJournal &quot;DD MMM YYYY&quot; &quot;journal&quot;&gt;&gt;&lt;&lt;nwsaver&gt;&gt;&lt;&lt;slider chkSliderOptionsPanel OptionsPanel &quot;options »&quot; &quot;Change TiddlyWiki advanced options&quot;&gt;&gt;</pre>
 </div>
-<div title="nwSaver-Plugin.js" modifier="Okido" created="201901261406" modified="201906071644" tags="systemConfig nwsaver" changecount="10" server.type="file" server.host="file:///home/dev/nw/github/nwjs-v0.37.3-linux-x64/data/nwSaver-source.html" server.page.revision="201904021248">
+<div title="nwSaver-Plugin.js" modifier="Okido" created="201901261406" modified="201906130847" tags="systemConfig nwsaver">
 <pre>/***
 |Name|nwSaver-Plugin.js |
-|Version|1.0.6 |
+|Version|1.1.0 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
 &lt;&lt;&lt;
-This plugin makes saving from a nw.js environment possible, required is the nwTWcSaver.js file.
-nwTWcSaver.js should be in the same folder as the TWc file is.
+This plugin makes saving TWc as a nw.js application possible.
 &lt;&lt;&lt;
 !!!Usage
 &lt;&lt;&lt;
-Put following code in [[SideBarOptions]] &lt;nowiki&gt;&lt;&lt;nwsaver&gt;&gt;&lt;/nowiki&gt;&lt;&lt;nwsaver&gt;&gt;
+
 &lt;&lt;&lt;
 !!!Configuration
 &lt;&lt;&lt;
-
+Put following code in [[SideBarOptions]] &lt;nowiki&gt;&lt;&lt;nwsaver&gt;&gt;&lt;/nowiki&gt;&lt;&lt;nwsaver&gt;&gt;
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
-2019.04.17 1.0.6 Added win path coding nwTWcSaver.js
+2019.06.13 1.1.0 Moved the code in the external file and to this plugin
+2019.04.17 1.0.6 Added win path coding in nwTWcSaver.js
 2019.04.02 1.0.5 Removed hard coded paths for WinXX
 2019.03.10 1.0.4 Updated documentation and fixed date format
 2019.02.25 1.0.3 Removed moment.js dependency
@@ -582,43 +582,67 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
 
     config.macros.nwsaver.onclick = function () {
     
-  /* Last updated 02-04-2019
-   * Only use the nwsaver when we are in nw environment,
-   * test on (typeof nw != &quot;object&quot;){ ..... }
-   * Linux uses / slash
-   * WinXX uses \ slash
+  /* Last updated 12-06-2019
+   * Linux uses / slash in paths
+   * WinXX uses \ slash in paths
    */
- 
-  if (typeof nw === &quot;object&quot;) {
-    const debug = false;
+
+  /* Detect the environment we are running in */
+  const environmentNW = typeof nw === &quot;object&quot;;
+  const fs = environmentNW ? require('fs') : &quot;&quot;;
+  const debug = false;
+
+
+  function saveTWc (fullPath, wikiContent) {
+    try {
+      let pathName = process.platform === 'win32' ? fullPath.substr(0, fullPath.lastIndexOf('\\')) : fullPath.substr(0, fullPath.lastIndexOf('/'));
+        debug ? console.log('Path out: ', pathName) : &quot;&quot;;
+        debug ? console.log('Path in: ', fullPath) : &quot;&quot;;
+      if (!fs.existsSync(pathName)) fs.mkdirSync(pathName);
+      fs.writeFileSync(fullPath, wikiContent);
+      return true;
+    } catch (error) {
+        return { error: error };
+      }
+  }
+
+  function loadTWc (fullPath) {
+    try {
+      let wikiContent = fs.readFileSync(fullPath).toString();
+      return wikiContent;
+    } catch (error) {
+        return { error: error };
+      }
+  }
+
+  if (environmentNW) {
     const now = new Date();
-    const nwSaver = require('./nwTWcSaver.js');
     const OS = window.navigator.platform;
-    debug ? wikify(&quot;Platform: &quot; + OS, place) : &quot;&quot;;
-    
     let localPath = nw.__filename;
     localPath = OS === 'Win32' ? localPath.replace(/\//g, '\\') : localPath;   
     
     let backupPath = getBackupPath(localPath);
     backupPath = OS === 'Win32' ? backupPath.replace(/\//g, '\\') : backupPath;
-
+    
+      debug ? wikify(&quot;Platform: &quot; + OS, place) : &quot;&quot;;
       debug ? wikify(&quot;\nLocalPath: &quot; + localPath + '\nbackupPath: ' + backupPath, place) : &quot;&quot;;
 
-    const original = nwSaver.loadTWc(localPath);
+    const original = loadTWc(localPath);
     const posDiv = locateStoreArea(original);
     const updatedTW = updateOriginal(original, posDiv, localPath);
-    nwSaver.saveTWc(localPath, updatedTW);
+    saveTWc(localPath, updatedTW);
     
-    const modes = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;latest&quot;,0] ];  // [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;], [&quot;m0mm&quot;]
+    const modes = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ];  // [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;]
     let backupNames = modes.map(d =&gt; backupPath.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/, '$1' + now.formatString(d[0]).toLowerCase()+'$3'));
     
       debug ? wikify(&quot;\nLocalPath: \n&quot; + localPath,place) : &quot;&quot;;
       debug ? wikify(&quot;\nPathnames: \n&quot; + backupNames.join('\n'),place) : &quot;&quot;;
     
-    backupNames.forEach(d =&gt; nwSaver.saveTWc(d, updatedTW));
+    backupNames.forEach(d =&gt; saveTWc(d, updatedTW));
     displayMessage(&quot;File and backups saved @ &quot; + now.formatString('0hh:0mm'));
   }
-  else { saveChanges();
+  else {
+         saveChanges();
          return false;
        } 
     }
@@ -626,11 +650,10 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
 /* CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="zzz-config" creator="Okido" modifier="Okido" created="201904151358" modified="201906071644" tags="systemConfig" changecount="4">
+<div title="zzz-config" creator="Okido" modifier="Okido" created="201904151358" modified="201906130928" tags="systemConfig" changecount="5">
 <pre>//{{{
 config.options.chkHttpReadOnly = false;
 config.options.txtBackupFolder = &quot;backup&quot;;
-config.options.txtUserName = &quot;Okido&quot;;
 //}}}</pre>
 </div>
 </div>
