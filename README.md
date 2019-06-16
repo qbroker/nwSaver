@@ -19,10 +19,19 @@ Save TiddlyWiki classic in nw.js
 
 ## TWc information
 * The TWc nwSaver.html in this repo has the plugin loaded and works out of the box
-* To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename "main" in package.json
+* To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename "main" in package.json too
 * The save macro can be added to SideBarOptions like ```<<nwsaver>>```
 * Now you should have a TWc that can save
 * You need use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
+
+### Tiddlywiki license
+TiddlyWiki is Copyright 2013 UnaMesa Assocation
+It is licensed under a BSD License. See [here](https://github.com/TiddlyWiki/tiddlywiki/blob/master/html/copyright.txt) for the exact terms.
+
+### Tiddlywiki @ Google groups
+https://groups.google.com/forum/#!forum/tiddlywikiclassic
+### Tiddlywiki @ Github
+https://github.com/TiddlyWiki/TiddlyWiki
 
 ## nw.js
 * In package.json the path to the wiki is defined in "main": "./data/nwSaver.html"
