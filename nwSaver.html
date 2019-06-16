@@ -529,7 +529,7 @@ noscript {display:none;} /* Fixes a feature in Firefox 1.5.0.2 where print previ
 <div title="SideBarOptions" creator="Okido" modifier="Okido" created="201904151324" modified="201904151329" changecount="3">
 <pre>&lt;&lt;search&gt;&gt;&lt;&lt;closeAll&gt;&gt;&lt;&lt;permaview&gt;&gt;&lt;&lt;newTiddler&gt;&gt;&lt;&lt;newJournal &quot;DD MMM YYYY&quot; &quot;journal&quot;&gt;&gt;&lt;&lt;nwsaver&gt;&gt;&lt;&lt;slider chkSliderOptionsPanel OptionsPanel &quot;options »&quot; &quot;Change TiddlyWiki advanced options&quot;&gt;&gt;</pre>
 </div>
-<div title="nwSaver-Plugin.js" modifier="Okido" created="201901261406" modified="201906130847" tags="systemConfig nwsaver">
+<div title="nwSaver-Plugin.js" modifier="Okido" created="201901261406" modified="201906161131" tags="systemConfig nwsaver">
 <pre>/***
 |Name|nwSaver-Plugin.js |
 |Version|1.1.0 |
@@ -549,7 +549,7 @@ Put following code in [[SideBarOptions]] &lt;nowiki&gt;&lt;&lt;nwsaver&gt;&gt;&l
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
-2019.06.13 1.1.0 Moved the code in the external file and to this plugin
+2019.06.13 1.1.0 Moved the code in the external nwTWcSaver.js into this plugin
 2019.04.17 1.0.6 Added win path coding in nwTWcSaver.js
 2019.04.02 1.0.5 Removed hard coded paths for WinXX
 2019.03.10 1.0.4 Updated documentation and fixed date format
@@ -581,70 +581,8 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
     createTiddlyButton(place, label, tooltip, this.onclick)
 
     config.macros.nwsaver.onclick = function () {
-    
-  /* Last updated 12-06-2019
-   * Linux uses / slash in paths
-   * WinXX uses \ slash in paths
-   */
-
-  /* Detect the environment we are running in */
-  const environmentNW = typeof nw === &quot;object&quot;;
-  const fs = environmentNW ? require('fs') : &quot;&quot;;
-  const debug = false;
-
-
-  function saveTWc (fullPath, wikiContent) {
-    try {
-      let pathName = process.platform === 'win32' ? fullPath.substr(0, fullPath.lastIndexOf('\\')) : fullPath.substr(0, fullPath.lastIndexOf('/'));
-        debug ? console.log('Path out: ', pathName) : &quot;&quot;;
-        debug ? console.log('Path in: ', fullPath) : &quot;&quot;;
-      if (!fs.existsSync(pathName)) fs.mkdirSync(pathName);
-      fs.writeFileSync(fullPath, wikiContent);
-      return true;
-    } catch (error) {
-        return { error: error };
-      }
-  }
-
-  function loadTWc (fullPath) {
-    try {
-      let wikiContent = fs.readFileSync(fullPath).toString();
-      return wikiContent;
-    } catch (error) {
-        return { error: error };
-      }
-  }
-
-  if (environmentNW) {
-    const now = new Date();
-    const OS = window.navigator.platform;
-    let localPath = nw.__filename;
-    localPath = OS === 'Win32' ? localPath.replace(/\//g, '\\') : localPath;   
-    
-    let backupPath = getBackupPath(localPath);
-    backupPath = OS === 'Win32' ? backupPath.replace(/\//g, '\\') : backupPath;
-    
-      debug ? wikify(&quot;Platform: &quot; + OS, place) : &quot;&quot;;
-      debug ? wikify(&quot;\nLocalPath: &quot; + localPath + '\nbackupPath: ' + backupPath, place) : &quot;&quot;;
-
-    const original = loadTWc(localPath);
-    const posDiv = locateStoreArea(original);
-    const updatedTW = updateOriginal(original, posDiv, localPath);
-    saveTWc(localPath, updatedTW);
-    
-    const modes = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ];  // [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;]
-    let backupNames = modes.map(d =&gt; backupPath.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/, '$1' + now.formatString(d[0]).toLowerCase()+'$3'));
-    
-      debug ? wikify(&quot;\nLocalPath: \n&quot; + localPath,place) : &quot;&quot;;
-      debug ? wikify(&quot;\nPathnames: \n&quot; + backupNames.join('\n'),place) : &quot;&quot;;
-    
-    backupNames.forEach(d =&gt; saveTWc(d, updatedTW));
-    displayMessage(&quot;File and backups saved @ &quot; + now.formatString('0hh:0mm'));
-  }
-  else {
-         saveChanges();
-         return false;
-       } 
+    /* Minified with UglifyJS */
+const environmentNW=&quot;object&quot;==typeof nw,fs=environmentNW?require(&quot;fs&quot;):&quot;&quot;,debug=!1;function saveTWc(e,t){try{let n=&quot;win32&quot;===process.platform?e.substr(0,e.lastIndexOf(&quot;\\&quot;)):e.substr(0,e.lastIndexOf(&quot;/&quot;));return debug&amp;&amp;console.log(&quot;Path out: &quot;,n),debug&amp;&amp;console.log(&quot;Path in: &quot;,e),fs.existsSync(n)||fs.mkdirSync(n),fs.writeFileSync(e,t),!0}catch(e){return{error:e}}}function loadTWc(e){try{return fs.readFileSync(e).toString()}catch(e){return{error:e}}}if(!environmentNW)return saveChanges(),!1;{const e=new Date,t=window.navigator.platform;let n=nw.__filename;n=&quot;Win32&quot;===t?n.replace(/\//g,&quot;\\&quot;):n;let a=getBackupPath(n);a=&quot;Win32&quot;===t?a.replace(/\//g,&quot;\\&quot;):a,debug&amp;&amp;wikify(&quot;Platform: &quot;+t,place),debug&amp;&amp;wikify(&quot;\nLocalPath: &quot;+n+&quot;\nbackupPath: &quot;+a,place);const r=loadTWc(n),o=locateStoreArea(r),c=updateOriginal(r,o,n);saveTWc(n,c);let i=[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;d0DD&quot;],[&quot;m0mm&quot;],[&quot;latest&quot;,0]].map(t=&gt;a.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(t[0]).toLowerCase()+&quot;$3&quot;));debug&amp;&amp;wikify(&quot;\nLocalPath: \n&quot;+n,place),debug&amp;&amp;wikify(&quot;\nPathnames: \n&quot;+i.join(&quot;\n&quot;),place),i.forEach(e=&gt;saveTWc(e,c)),displayMessage(&quot;File and backups saved @ &quot;+e.formatString(&quot;0hh:0mm&quot;))}
     }
   }
 /* CODE ENDS HERE */
