@@ -529,10 +529,10 @@ noscript {display:none;} /* Fixes a feature in Firefox 1.5.0.2 where print previ
 <div title="SideBarOptions" creator="Okido" modifier="Okido" created="201904151324" modified="201904151329" changecount="3">
 <pre>&lt;&lt;search&gt;&gt;&lt;&lt;closeAll&gt;&gt;&lt;&lt;permaview&gt;&gt;&lt;&lt;newTiddler&gt;&gt;&lt;&lt;newJournal &quot;DD MMM YYYY&quot; &quot;journal&quot;&gt;&gt;&lt;&lt;nwsaver&gt;&gt;&lt;&lt;slider chkSliderOptionsPanel OptionsPanel &quot;options »&quot; &quot;Change TiddlyWiki advanced options&quot;&gt;&gt;</pre>
 </div>
-<div title="nwSaver-Plugin.js" modifier="Okido" created="201901261406" modified="201906161131" tags="systemConfig nwsaver">
+<div title="nwSaver-Plugin.js" modifier="Okido" created="201901261406" modified="201907141233" tags="systemConfig nwsaver" changecount="1">
 <pre>/***
 |Name|nwSaver-Plugin.js |
-|Version|1.1.0 |
+|Version|1.1.1 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
@@ -545,10 +545,18 @@ This plugin makes saving TWc as a nw.js application possible.
 &lt;&lt;&lt;
 !!!Configuration
 &lt;&lt;&lt;
-Put following code in [[SideBarOptions]] &lt;nowiki&gt;&lt;&lt;nwsaver&gt;&gt;&lt;/nowiki&gt;&lt;&lt;nwsaver&gt;&gt;
+Put following code in [[SideBarOptions]] &lt;nowiki&gt;&lt;&lt;nwsaver&gt;&gt;&lt;/nowiki&gt;&lt;&lt;nwsaver&gt;&gt;.
+The standard backup pattern is twname-YYYY.html, twname-MMM.html, twname-ddd.html, twname-latest.html.
+If you want a different backup pattern create a tiddler with the name [[zzzz-config]], tag it with systemConfig and put the following code in it:
+{{{
+ // Possible settings for nwSaver backup pattern
+ // [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0], [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;] ];
+ config.options.nwSaver = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ]; 
+}}}
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
+2019.06.16 1.1.1 Made backup sequency definable in systemConfig tiddler
 2019.06.13 1.1.0 Moved the code in the external nwTWcSaver.js into this plugin
 2019.04.17 1.0.6 Added win path coding in nwTWcSaver.js
 2019.04.02 1.0.5 Removed hard coded paths for WinXX
@@ -578,11 +586,11 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
   config.macros.nwsaver.handler = function ( place, macroName, params, wikifier, paramString, tiddler ) {
     var label = &quot;Save&quot;
     var tooltip = &quot;You are going to save your TWc&quot;
-    createTiddlyButton(place, label, tooltip, this.onclick)
+    createTiddlyButton(place, label, tooltip, this.onclick, &quot;button saveChangesButton&quot;)
 
     config.macros.nwsaver.onclick = function () {
     /* Minified with UglifyJS */
-const environmentNW=&quot;object&quot;==typeof nw,fs=environmentNW?require(&quot;fs&quot;):&quot;&quot;,debug=!1;function saveTWc(e,t){try{let n=&quot;win32&quot;===process.platform?e.substr(0,e.lastIndexOf(&quot;\\&quot;)):e.substr(0,e.lastIndexOf(&quot;/&quot;));return debug&amp;&amp;console.log(&quot;Path out: &quot;,n),debug&amp;&amp;console.log(&quot;Path in: &quot;,e),fs.existsSync(n)||fs.mkdirSync(n),fs.writeFileSync(e,t),!0}catch(e){return{error:e}}}function loadTWc(e){try{return fs.readFileSync(e).toString()}catch(e){return{error:e}}}if(!environmentNW)return saveChanges(),!1;{const e=new Date,t=window.navigator.platform;let n=nw.__filename;n=&quot;Win32&quot;===t?n.replace(/\//g,&quot;\\&quot;):n;let a=getBackupPath(n);a=&quot;Win32&quot;===t?a.replace(/\//g,&quot;\\&quot;):a,debug&amp;&amp;wikify(&quot;Platform: &quot;+t,place),debug&amp;&amp;wikify(&quot;\nLocalPath: &quot;+n+&quot;\nbackupPath: &quot;+a,place);const r=loadTWc(n),o=locateStoreArea(r),c=updateOriginal(r,o,n);saveTWc(n,c);let i=[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;d0DD&quot;],[&quot;m0mm&quot;],[&quot;latest&quot;,0]].map(t=&gt;a.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(t[0]).toLowerCase()+&quot;$3&quot;));debug&amp;&amp;wikify(&quot;\nLocalPath: \n&quot;+n,place),debug&amp;&amp;wikify(&quot;\nPathnames: \n&quot;+i.join(&quot;\n&quot;),place),i.forEach(e=&gt;saveTWc(e,c)),displayMessage(&quot;File and backups saved @ &quot;+e.formatString(&quot;0hh:0mm&quot;))}
+const environmentNW=&quot;object&quot;==typeof nw,fs=environmentNW?require(&quot;fs&quot;):&quot;&quot;,debug=!1;function saveTWc(e,n){try{let t=&quot;win32&quot;===process.platform?e.substr(0,e.lastIndexOf(&quot;\\&quot;)):e.substr(0,e.lastIndexOf(&quot;/&quot;));return debug&amp;&amp;console.log(&quot;Path out: &quot;,t),debug&amp;&amp;console.log(&quot;Path in: &quot;,e),fs.existsSync(t)||fs.mkdirSync(t),fs.writeFileSync(e,n),!0}catch(e){return{error:e}}}function loadTWc(e){try{return fs.readFileSync(e).toString()}catch(e){return{error:e}}}if(!environmentNW)return saveChanges(),!1;{const e=new Date,n=window.navigator.platform;let t=nw.__filename;const a=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]];t=&quot;Win32&quot;===n?t.replace(/\//g,&quot;\\&quot;):t;let r=getBackupPath(t);r=&quot;Win32&quot;===n?r.replace(/\//g,&quot;\\&quot;):r,debug&amp;&amp;wikify(&quot;Platform: &quot;+n,place),debug&amp;&amp;wikify(&quot;\nLocalPath: &quot;+t+&quot;\nbackupPath: &quot;+r,place);const o=loadTWc(t),c=locateStoreArea(o),i=updateOriginal(o,c,t);saveTWc(t,i);let s=a.map(n=&gt;r.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(n[0]).toLowerCase()+&quot;$3&quot;));debug&amp;&amp;wikify(&quot;\nLocalPath: \n&quot;+t,place),debug&amp;&amp;wikify(&quot;\nPathnames: \n&quot;+s.join(&quot;\n&quot;),place),s.forEach(e=&gt;saveTWc(e,i)),displayMessage(&quot;File and backups saved @ &quot;+e.formatString(&quot;0hh:0mm&quot;))}
     }
   }
 /* CODE ENDS HERE */
@@ -592,6 +600,15 @@ const environmentNW=&quot;object&quot;==typeof nw,fs=environmentNW?require(&quot
 <pre>//{{{
 config.options.chkHttpReadOnly = false;
 config.options.txtBackupFolder = &quot;backup&quot;;
+//}}}</pre>
+</div>
+<div title="zzzz-config" modifier="Okido" created="201906171640" modified="201907141233" tags="systemConfig" changecount="1">
+<pre>//{{{
+  // Possible settings for saver backup pattern
+  // [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0], [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;] ]
+
+config.options.nwSaver = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ];
+
 //}}}</pre>
 </div>
 </div>
