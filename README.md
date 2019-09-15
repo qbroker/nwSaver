@@ -24,6 +24,9 @@ Save TiddlyWiki classic in nw.js
 * Now you should have a TWc that can save
 * You need use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
 
+## nwTWcAppStyle-plugin.js
+The nwTWcAppStyle-plugin.js gives an application like window under nw.js that has the same chrome on Linux and Windows, at present it does not work in a browser.
+
 ### Tiddlywiki license
 TiddlyWiki is Copyright 2013 UnaMesa Assocation
 It is licensed under a BSD License. See [here](https://github.com/TiddlyWiki/tiddlywiki/blob/master/html/copyright.txt) for the exact terms.
@@ -38,9 +41,7 @@ https://github.com/TiddlyWiki/TiddlyWiki
 * If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
 ## Roadmap
-* Switch to a frameless window, all chrome is set in TWc
 * Publish TWcHive, so you can start multiple TWc's from one TWc
-
 
 
 Have a nice day, Okido
