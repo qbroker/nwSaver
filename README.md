@@ -15,14 +15,13 @@ Save TiddlyWiki classic in nw.js
 8. On Linux execute nw in the folder xxx/nwjs-sdk-v0.38.1-linux-x64
 9. On Windows execute nw.exe in the folder xxx/nwjs-sdk-v0.38.1-linux-x64
 10. nw.js should start and give you TWc
-11. If your tiddlers only have view mode, save and reload once 
 
 ## TWc information
 * The TWc nwSaver.html in this repo has the plugin loaded and works out of the box
-* To use you own TWc import all tiddlers into nwSaver.html, if you rename it, you must also rename "main" in package.json too
+* To use your own TWc import all tiddlers into nwSaver.html, if you rename it, rename "main" in package.json too
 * The save macro can be added to SideBarOptions like ```<<nwsaver>>```
 * Now you should have a TWc that can save
-* You need use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
+* You need to use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
 
 ## nwTWcAppStyle-plugin.js
 The nwTWcAppStyle-plugin.js gives an application like window under nw.js that has the same chrome on Linux and Windows, at present it does not work in a browser.
@@ -45,7 +44,7 @@ https://github.com/TiddlyWiki/TiddlyWiki
 # nwHive
 Access all your TWc wikis from one wiki.
 This is a proof of concept, more functions will be added, the TWc core has jQuery 3.4.1 and some plugins are modified.
-For installation instruction see here above, just change the filename to nwHive.html in package.json.
+For installation instructions see here above, just change the filename to nwHive.html in package.json.
 The usage instructions are inculded.
 Be aware that it only runs in nw.js environment.
 
