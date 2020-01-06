@@ -821,6 +821,9 @@ config.macros.loadTiddlers = {
 <div title="SiteTitle" creator="Okido" modifier="Okido" created="201910221745" modified="201910260822" changecount="1">
 <pre>nwSaver</pre>
 </div>
+<div title="SystemSettings" creator="Okido" modifier="Okido" created="202001061916" modified="202001061922" tags="systemsettings excludeLists" changecount="2">
+<pre>chkHttpReadOnly: false;</pre>
+</div>
 <div title="ViewTemplate" creator="Okido" modifier="Okido" created="201910191621">
 <pre>&lt;!--{{{--&gt;
 &lt;div class='toolbar' role='navigation' macro='toolbar [[ToolbarCommands::ViewToolbar]]'&gt;&lt;/div&gt;
@@ -834,7 +837,7 @@ config.macros.loadTiddlers = {
 &lt;!--}}}--&gt;
 </pre>
 </div>
-<div title="nwReload-Plugin.js" creator="Okido" modifier="Okido" created="201910190900" modified="201910260825" tags="nwreload systemConfig nwsavergithub nwhivegithub">
+<div title="nwReload-Plugin.js" creator="Okido" modifier="Okido" created="201910190900" modified="201912011418" tags="nwreload systemConfig nwsavergithub nwhivegithub actionplugin calibsrc">
 <pre>/***
 |Name|nwReload-Plugin.js |
 |Version|0.0.3 |
@@ -874,15 +877,15 @@ THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRES
 ***/
 //{{{
 /* JS CODE STARTS HERE */
-/* Minified with UglifyJS - 25-10-2019 */
+/* Minified with UglifyJS - 01-12-2019 */
 config.macros.nwreload={},config.macros.nwreload.handler=function(o,n,c,i,a,d){createTiddlyButton(o,&quot;Reload&quot;,&quot;Reload this Tiddlywiki.&quot;,this.onclick,&quot;button&quot;)},config.macros.nwreload.onclick=function(){document.location.reload(!0)};
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="nwSaver-Plugin.js" creator="Okido" modifier="Okido" created="201901261406" modified="201910250742" tags="nwsaver systemConfig nwsavergithub nwhivegithub">
+<div title="nwSaver-Plugin.js" creator="Okido" modifier="Okido" created="201901261406" modified="202001061912" tags="nwsaver systemConfig nwsavergithub nwhivegithub actionplugin calibsrc">
 <pre>/***
 |Name|nwSaver-Plugin.js |
-|Version|1.1.3 |
+|Version|1.1.5 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
@@ -906,6 +909,8 @@ If you want a different backup pattern create a tiddler with the name [[zzzz-con
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
+2020.01.03 1.1.5 Fixed the first load view/edit mode problem 
+2019.11.10 1.1.4 Made some minor changes and added remarks to the source
 2019.10.19 1.1.3 Added tags to make distribution with the [[LoadTiddlersPlugin]] easy
 2019.09.15 1.1.2 Minified the plugin code includding the &lt;nowiki&gt;TWc&lt;/nowiki&gt; macro code
 2019.06.16 1.1.1 Made backup sequency definable in systemConfig tiddler
@@ -921,7 +926,7 @@ If you want a different backup pattern create a tiddler with the name [[zzzz-con
 &lt;&lt;&lt;
 The MIT License (MIT)
 
-Copyright (c) 2019 Okido
+Copyright (c) 2019 - 2020 Okido
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -934,15 +939,15 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
 ***/
 //{{{
 /* JS CODE STARTS HERE */
-/* Minified with UglifyJS - 25-10-2019 */
-config.macros.nwsaver={},config.macros.nwsaver.handler=function(n,t,e,a,o,r){createTiddlyButton(n,&quot;Save&quot;,&quot;You are going to save your TWc&quot;,this.onclick,&quot;button saveChangesButton&quot;),config.macros.nwsaver.onclick=function(){const t=&quot;object&quot;==typeof nw,e=t?require(&quot;fs&quot;):&quot;&quot;,a=!1;function o(n,t){try{let o=&quot;win32&quot;===process.platform?n.substr(0,n.lastIndexOf(&quot;\\&quot;)):n.substr(0,n.lastIndexOf(&quot;/&quot;));return a&amp;&amp;console.log(&quot;Path out: &quot;,o),a&amp;&amp;console.log(&quot;Path in: &quot;,n),e.existsSync(o)||e.mkdirSync(o),e.writeFileSync(n,t),!0}catch(n){return{error:n}}}if(!t)return saveChanges(),!1;{const t=new Date,r=window.navigator.platform;let i=nw.__filename;const c=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]];i=&quot;Win32&quot;===r?i.replace(/\//g,&quot;\\&quot;):i;let s=getBackupPath(i);s=&quot;Win32&quot;===r?s.replace(/\//g,&quot;\\&quot;):s,a&amp;&amp;wikify(&quot;Platform: &quot;+r,n),a&amp;&amp;wikify(&quot;\nLocalPath: &quot;+i+&quot;\nbackupPath: &quot;+s,n);const l=function(n){try{return e.readFileSync(n).toString()}catch(n){return{error:n}}}(i),f=locateStoreArea(l),u=updateOriginal(l,f,i);o(i,u);let g=c.map(n=&gt;s.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+t.formatString(n[0]).toLowerCase()+&quot;$3&quot;));a&amp;&amp;wikify(&quot;\nLocalPath: \n&quot;+i,n),a&amp;&amp;wikify(&quot;\nPathnames: \n&quot;+g.join(&quot;\n&quot;),n),g.forEach(n=&gt;o(n,u)),displayMessage(&quot;File and backups saved @ &quot;+t.formatString(&quot;0hh:0mm&quot;))}}};
+/* Minified with UglifyJS - 06-01-2020 */
+config.macros.nwsaver={},config.macros.nwsaver.handler=function(n,e,t,a,o,r){createTiddlyButton(n,&quot;Save&quot;,&quot;You are going to save your TWc&quot;,this.onclick,&quot;button saveChangesButton&quot;),config.macros.nwsaver.onclick=function(){const e=&quot;object&quot;==typeof nw,t=e?require(&quot;fs&quot;):&quot;&quot;,a=!1;if(!e)return saveChanges(),!1;{const e=new Date,r=window.navigator.platform,c=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]],i=&quot;Win32&quot;===r?nw.__filename.replace(/\//g,&quot;\\&quot;):nw.__filename;let s=getBackupPath(i);s=&quot;Win32&quot;===r?s.replace(/\//g,&quot;\\&quot;):s;const l=function(n){try{let e=t.readFileSync(n).toString();return e}catch(n){return{error:n}}}(i),f=locateStoreArea(l),u=updateOriginal(l,f,i);o(i,u);let g=c.map(n=&gt;s.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(n[0]).toLowerCase()+&quot;$3&quot;));a&amp;&amp;console.log(&quot;\nPlatform: &quot;+r),a&amp;&amp;console.log(&quot;\nLocalPath: &quot;+i+&quot;\nbackupPath: &quot;+s),a&amp;&amp;wikify(&quot;\nLocalPath: \n&quot;+i,n),a&amp;&amp;wikify(&quot;\nPathnames: \n&quot;+g.join(&quot;\n&quot;),n),g.forEach(n=&gt;o(n,u)),displayMessage(&quot;File and backups saved @ &quot;+e.formatString(&quot;0hh:0mm&quot;))}function o(n,e){try{let o=&quot;win32&quot;===process.platform?n.substr(0,n.lastIndexOf(&quot;\\&quot;)):n.substr(0,n.lastIndexOf(&quot;/&quot;));return a&amp;&amp;console.log(&quot;Path out: &quot;,o),a&amp;&amp;console.log(&quot;Path in: &quot;,n),t.existsSync(o)||t.mkdirSync(o),t.writeFileSync(n,e),!0}catch(n){return{error:n}}}}};
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="nwTWcAppStyle-Plugin.js" creator="Okido" modifier="Okido" created="201906101009" modified="201910271219" tags="nwtwcappstyle systemConfig nwsavergithub nwhivegithub">
+<div title="nwTWcAppStyle-Plugin.js" creator="Okido" modifier="Okido" created="201906101009" modified="202001061920" tags="nwtwcappstyle systemConfig nwsavergithub nwhivegithub calibsrc" changecount="1">
 <pre>/***
 |Name|nwTWcAppStyle-Plugin.js |
-|Version|1.0.0 |
+|Version|1.0.3 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
@@ -976,6 +981,7 @@ Remove following code from PageTemplate.
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
+2019.12.25 Removed some obsolete code
 2019.10.27 Fixed some more positioning issue's, jQuery 3.4.1 calculates width and height more accurate
 2019.10.01 Fixed some more positioning issue's
 2019.09.24 Fixed some more positioning issue's after refreshAll is done
@@ -1039,21 +1045,24 @@ THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRES
 ***/
 //{{{
 /* JS CODE STARTS HERE */
-/* Minified with UglifyJS - 27-10-2019 */
-config.macros.nwtwcappstyle={},config.macros.nwtwcappstyle.handler=function(){if(jQuery('a[title = &quot;Search this TiddlyWiki&quot;] ').css({display:&quot;none&quot;}),jQuery(&quot;.searchField&quot;).attr({placeholder:&quot;Search&quot;}),&quot;object&quot;==typeof nw&amp;&amp;(&quot;none&quot;!==jQuery(&quot;.header&quot;).css(&quot;display&quot;)&amp;&amp;jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),0===jQuery(&quot;#windowheader&quot;).length)){const e=&quot;red&quot;,i=&quot;ddd&quot;,s=store.getTiddlerText(&quot;SiteTitle&quot;),r=`${version.major}.${version.minor}.${version.revision}`,t=&quot;&lt;svg class='svgclosebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z'/&gt;&lt;/svg&gt;&quot;,n=&quot;&lt;svg class='svgmaximizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V192h416v234z'/&gt;&lt;/svg&gt;&quot;,o=&quot;&lt;svg class='svgminimizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M480 480H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h448c17.7 0 32 14.3 32 32s-14.3 32-32 32z'/&gt;&lt;/svg&gt;&quot;;jQuery(&quot;body&quot;).css({&quot;margin-left&quot;:&quot;0px&quot;,&quot;padding-left&quot;:&quot;1px&quot;,&quot;border-left&quot;:&quot;1px solid #CCC&quot;,&quot;border-top&quot;:&quot;1px solid #CCC&quot;,&quot;border-right&quot;:&quot;1px solid #CCC&quot;,&quot;border-bottom&quot;:&quot;0px&quot;,&quot;border-radius&quot;:&quot;4px&quot;,&quot;min-height&quot;:&quot;100%&quot;,&quot;z-index&quot;:&quot;99&quot;}),jQuery(&quot;body&quot;).prepend('&lt;div id=&quot;windowheader&quot;&gt;&lt;/div&gt;'),jQuery(&quot;#backstageArea&quot;).css({padding:&quot;0em&quot;}),jQuery(&quot;#displayArea&quot;).css({&quot;margin-top&quot;:&quot;2.0em&quot;}),jQuery(&quot;#displayArea&quot;).css({padding:&quot;1% 11.6% 100% 9.2%&quot;}),jQuery(&quot;#sidebarOptions input&quot;).attr(&quot;placeholder&quot;,&quot;Search&quot;),jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),jQuery(&quot;#windowheader&quot;).append(&quot;&lt;div id='left'&gt;&lt;/div&gt;&quot;).append(`&lt;div id='center'&gt;${s} v${r}&lt;/div&gt;`).append(&quot;&lt;div id='right'&gt;&lt;/div&gt;&quot;),jQuery(&quot;#windowheader&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;space-between&quot;,&quot;background-color&quot;:&quot;#03C&quot;,width:&quot;100%&quot;,&quot;border-bottom&quot;:&quot;1px solid #ccc&quot;,&quot;border-top&quot;:&quot;1px solid #ccc&quot;,margin:&quot;-1px 0px 4px 0px&quot;,padding:&quot;1px&quot;,position:&quot;fixed&quot;,&quot;z-index&quot;:&quot;200&quot;}),&quot;TRUE&quot;===store.getTiddlerText(&quot;Github&quot;)&amp;&amp;jQuery(&quot;#windowheader&quot;).css({&quot;background-color&quot;:&quot;green&quot;}),jQuery(&quot;#left&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#center&quot;).css({width:&quot;34%&quot;,&quot;text-align&quot;:&quot;center&quot;,color:&quot;white&quot;,&quot;font-weight&quot;:&quot;&quot;,&quot;font-size&quot;:&quot;12px&quot;,padding:&quot;3px 0px 2px 0px&quot;}),jQuery(&quot;#right&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#right&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;flex-end&quot;,padding:&quot;2px 6px 2px 0px&quot;,height:&quot;16px&quot;}),jQuery(&quot;#right&quot;).append(o).append(n).append(t);const c={width:&quot;3%&quot;,fill:i,margin:&quot;0px 4px 0px 4px&quot;};jQuery(&quot;.svgclosebutton&quot;).css(c),jQuery(&quot;.svgmaximizebutton&quot;).css(c),jQuery(&quot;.svgminimizebutton&quot;).css(c),jQuery(&quot;.svgclosebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgmaximizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgminimizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;#windowheader&quot;).css({&quot;-webkit-app-region&quot;:&quot;drag&quot;}),jQuery(&quot;#right&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.messageArea&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.siteSubtitle&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;});const d=require(&quot;nw.gui&quot;);let p=!1;jQuery(&quot;.svgclosebutton&quot;).on(&quot;click&quot;,function(){window.close()}),jQuery(&quot;.svgminimizebutton&quot;).on(&quot;click&quot;,function(){d.Window.get().minimize()}),jQuery(&quot;.svgmaximizebutton&quot;).on(&quot;click&quot;,function(){!1===p?(d.Window.get().maximize(),p=!0):(d.Window.get().unmaximize(),p=!1)})}};
+/* Minified with UglifyJS - 25-12-2019 */
+config.macros.nwtwcappstyle={},config.macros.nwtwcappstyle.handler=function(){if(jQuery('a[title = &quot;Search this TiddlyWiki&quot;] ').css({display:&quot;none&quot;}),jQuery(&quot;.searchField&quot;).attr({placeholder:&quot;Search&quot;}),&quot;object&quot;==typeof nw&amp;&amp;(&quot;none&quot;!==jQuery(&quot;.header&quot;).css(&quot;display&quot;)&amp;&amp;jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),0===jQuery(&quot;#windowheader&quot;).length)){const e=&quot;red&quot;,i=&quot;ddd&quot;,s=store.getTiddlerText(&quot;SiteTitle&quot;),r=`${version.major}.${version.minor}.${version.revision}`,t=&quot;&lt;svg class='svgclosebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z'/&gt;&lt;/svg&gt;&quot;,n=&quot;&lt;svg class='svgmaximizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V192h416v234z'/&gt;&lt;/svg&gt;&quot;,o=&quot;&lt;svg class='svgminimizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M480 480H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h448c17.7 0 32 14.3 32 32s-14.3 32-32 32z'/&gt;&lt;/svg&gt;&quot;;jQuery(&quot;body&quot;).css({&quot;margin-left&quot;:&quot;0px&quot;,&quot;padding-left&quot;:&quot;1px&quot;,&quot;border-left&quot;:&quot;1px solid #CCC&quot;,&quot;border-top&quot;:&quot;1px solid #CCC&quot;,&quot;border-right&quot;:&quot;1px solid #CCC&quot;,&quot;border-bottom&quot;:&quot;0px&quot;,&quot;border-radius&quot;:&quot;4px&quot;,&quot;min-height&quot;:&quot;100%&quot;,&quot;z-index&quot;:&quot;99&quot;}),jQuery(&quot;body&quot;).prepend('&lt;div id=&quot;windowheader&quot;&gt;&lt;/div&gt;'),jQuery(&quot;#backstageArea&quot;).css({padding:&quot;0em&quot;}),jQuery(&quot;#displayArea&quot;).css({&quot;margin-top&quot;:&quot;2.0em&quot;}),jQuery(&quot;#displayArea&quot;).css({padding:&quot;1% 11.6% 100% 9.2%&quot;}),jQuery(&quot;#sidebarOptions input&quot;).attr(&quot;placeholder&quot;,&quot;Search&quot;),jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),jQuery(&quot;#windowheader&quot;).append(&quot;&lt;div id='left'&gt;&lt;/div&gt;&quot;).append(`&lt;div id='center'&gt;${s} v${r}&lt;/div&gt;`).append(&quot;&lt;div id='right'&gt;&lt;/div&gt;&quot;),jQuery(&quot;#windowheader&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;space-between&quot;,&quot;background-color&quot;:&quot;#03C&quot;,width:&quot;100%&quot;,&quot;border-bottom&quot;:&quot;1px solid #ccc&quot;,&quot;border-top&quot;:&quot;1px solid #ccc&quot;,margin:&quot;-1px 0px 4px 0px&quot;,padding:&quot;1px&quot;,position:&quot;fixed&quot;,&quot;z-index&quot;:&quot;200&quot;}),config.options.chkDevelopmentMode&amp;&amp;jQuery(&quot;#windowheader&quot;).css({&quot;background-color&quot;:&quot;darkred&quot;}),jQuery(&quot;#left&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#center&quot;).css({width:&quot;34%&quot;,&quot;text-align&quot;:&quot;center&quot;,color:&quot;white&quot;,&quot;font-weight&quot;:&quot;&quot;,&quot;font-size&quot;:&quot;12px&quot;,padding:&quot;3px 0px 2px 0px&quot;}),jQuery(&quot;#right&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#right&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;flex-end&quot;,padding:&quot;2px 6px 2px 0px&quot;,height:&quot;16px&quot;}),jQuery(&quot;#right&quot;).append(o).append(n).append(t);const c={width:&quot;3%&quot;,fill:i,margin:&quot;0px 4px 0px 4px&quot;};jQuery(&quot;.svgclosebutton&quot;).css(c),jQuery(&quot;.svgmaximizebutton&quot;).css(c),jQuery(&quot;.svgminimizebutton&quot;).css(c),jQuery(&quot;.svgclosebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgmaximizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgminimizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;#windowheader&quot;).css({&quot;-webkit-app-region&quot;:&quot;drag&quot;}),jQuery(&quot;#right&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.messageArea&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.siteSubtitle&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;});const d=require(&quot;nw.gui&quot;);let p=!1;jQuery(&quot;.svgclosebutton&quot;).on(&quot;click&quot;,function(){window.close()}),jQuery(&quot;.svgminimizebutton&quot;).on(&quot;click&quot;,function(){d.Window.get().minimize()}),jQuery(&quot;.svgmaximizebutton&quot;).on(&quot;click&quot;,function(){!1===p?(d.Window.get().maximize(),p=!0):(d.Window.get().unmaximize(),p=!1)})}};
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="zzz-config" creator="Okido" modifier="Okido" created="201904151358" modified="201910190947" tags="systemConfig">
+<div title="zzz-config" creator="Okido" modifier="Okido" created="201904151358" modified="202001061923" tags="systemConfig" changecount="1">
 <pre>//{{{
-config.options.chkHttpReadOnly = false;
 config.options.txtBackupFolder = &quot;backup&quot;;
 config.options.txtUserName = &quot;Okido&quot;;
 //}}}</pre>
 </div>
-<div title="zzzz-config" creator="Okido" modifier="Okido" created="201906171640" modified="201910271317" tags="systemConfig" changecount="1">
+<div title="zzzz-config" creator="Okido" modifier="Okido" created="201906171640" modified="201907141233" tags="systemConfig">
 <pre>//{{{
- config.options.nwSaver = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ];
+  // Possible settings for saver backup pattern
+  // [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0], [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;] ]
+
+config.options.nwSaver = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ];
+
 //}}}</pre>
 </div>
 </div>
