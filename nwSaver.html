@@ -526,11 +526,6 @@ noscript {display:none;} /* Fixes a feature in Firefox 1.5.0.2 where print previ
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="AutoLoader-nwSaver-4-Github" creator="Okido" modifier="Okido" created="201910190938" modified="201910271225" tags="autoloader nwsavergithub" changecount="2">
-<pre>!!Load tiddlers from corebroker.html that are tagged with: nwsavergithub
-
-&lt;&lt;loadTiddlers &quot;label:LOAD TAGGED nwsavergithub&quot; tag:nwsavergithub  sourcedata/corebroker.html confirm&gt;&gt;</pre>
-</div>
 <div title="LoadTiddlersPlugin" creator="Okido" modifier="Okido" created="201910190844" modified="201910190929" tags="systemConfig">
 <pre>/***
 |Name|LoadTiddlersPlugin|
@@ -821,8 +816,10 @@ config.macros.loadTiddlers = {
 <div title="SiteTitle" creator="Okido" modifier="Okido" created="201910221745" modified="201910260822" changecount="1">
 <pre>nwSaver</pre>
 </div>
-<div title="SystemSettings" creator="Okido" modifier="Okido" created="202001061916" modified="202001061922" tags="systemsettings excludeLists" changecount="2">
-<pre>chkHttpReadOnly: false;</pre>
+<div title="SystemSettings" creator="Okido" modifier="Okido" created="202001061916" modified="202003081502" tags="systemsettings excludeLists" changecount="3">
+<pre>//{{{
+chkHttpReadOnly: false;
+//}}}</pre>
 </div>
 <div title="ViewTemplate" creator="Okido" modifier="Okido" created="201910191621">
 <pre>&lt;!--{{{--&gt;
@@ -882,10 +879,10 @@ config.macros.nwreload={},config.macros.nwreload.handler=function(o,n,c,i,a,d){c
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="nwSaver-Plugin.js" creator="Okido" modifier="Okido" created="201901261406" modified="202001061912" tags="nwsaver systemConfig nwsavergithub nwhivegithub actionplugin calibsrc">
+<div title="nwSaver-Plugin.js" creator="Okido" modifier="Okido" created="201901261406" modified="202003081456" tags="nwsaver systemConfig nwsavergithub nwhivegithub actionplugin calibsrc">
 <pre>/***
 |Name|nwSaver-Plugin.js |
-|Version|1.1.5 |
+|Version|1.1.7 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
@@ -894,7 +891,14 @@ This plugin makes saving &lt;nowiki&gt;TWc&lt;/nowiki&gt; as a nw.js application
 &lt;&lt;&lt;
 !!!Usage
 &lt;&lt;&lt;
+Besides saving &lt;nowiki&gt;TWc&lt;/nowiki&gt; this plugin provides basic I/O access:
 
+  config.macros.nwsaver.folderentries(folderPath) &gt;&gt; returns an object with the key/value for folderpath and entries as an array
+  config.macros.nwsaver.folderentriesattributes(folderPath) &gt;&gt; returns an object with the file and folder attributes
+  config.macros.nwsaver.filterfile(folderPath) &gt;&gt; filter by files
+  config.macros.nwsaver.filterfolder(folderPath) &gt;&gt; filter by folders
+  config.macros.nwsaver.load(fullPath) &gt;&gt; load a file from disk, returns the content
+  config.macros.nwsaver.save(fullPath, content) &gt;&gt; save a file to disk
 &lt;&lt;&lt;
 !!!Configuration
 &lt;&lt;&lt;
@@ -906,9 +910,15 @@ If you want a different backup pattern create a tiddler with the name [[zzzz-con
  // [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0], [&quot;h0hh&quot;], [&quot;m0mm&quot;], [&quot;s0ss&quot;] ];
  config.options.nwSaver = [ [&quot;YYYY&quot;], [&quot;MMM&quot;], [&quot;ddd&quot;], [&quot;d0DD&quot;], [&quot;m0mm&quot;], [&quot;latest&quot;,0] ]; 
 }}}
+To assure that the &lt;nowiki&gt;TWc&lt;/nowiki&gt; is loaded in edit mode all the time add following code to SystemSettings
+{{{
+chkHttpReadOnly: false;
+}}}
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
+2020.03.08 1.1.7 Added basic I/O functions
+2020.02.16 1.1.6 Removed save function encapsulation, the saver can be used by other functions too
 2020.01.03 1.1.5 Fixed the first load view/edit mode problem 
 2019.11.10 1.1.4 Made some minor changes and added remarks to the source
 2019.10.19 1.1.3 Added tags to make distribution with the [[LoadTiddlersPlugin]] easy
@@ -939,15 +949,15 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
 ***/
 //{{{
 /* JS CODE STARTS HERE */
-/* Minified with UglifyJS - 06-01-2020 */
-config.macros.nwsaver={},config.macros.nwsaver.handler=function(n,e,t,a,o,r){createTiddlyButton(n,&quot;Save&quot;,&quot;You are going to save your TWc&quot;,this.onclick,&quot;button saveChangesButton&quot;),config.macros.nwsaver.onclick=function(){const e=&quot;object&quot;==typeof nw,t=e?require(&quot;fs&quot;):&quot;&quot;,a=!1;if(!e)return saveChanges(),!1;{const e=new Date,r=window.navigator.platform,c=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]],i=&quot;Win32&quot;===r?nw.__filename.replace(/\//g,&quot;\\&quot;):nw.__filename;let s=getBackupPath(i);s=&quot;Win32&quot;===r?s.replace(/\//g,&quot;\\&quot;):s;const l=function(n){try{let e=t.readFileSync(n).toString();return e}catch(n){return{error:n}}}(i),f=locateStoreArea(l),u=updateOriginal(l,f,i);o(i,u);let g=c.map(n=&gt;s.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(n[0]).toLowerCase()+&quot;$3&quot;));a&amp;&amp;console.log(&quot;\nPlatform: &quot;+r),a&amp;&amp;console.log(&quot;\nLocalPath: &quot;+i+&quot;\nbackupPath: &quot;+s),a&amp;&amp;wikify(&quot;\nLocalPath: \n&quot;+i,n),a&amp;&amp;wikify(&quot;\nPathnames: \n&quot;+g.join(&quot;\n&quot;),n),g.forEach(n=&gt;o(n,u)),displayMessage(&quot;File and backups saved @ &quot;+e.formatString(&quot;0hh:0mm&quot;))}function o(n,e){try{let o=&quot;win32&quot;===process.platform?n.substr(0,n.lastIndexOf(&quot;\\&quot;)):n.substr(0,n.lastIndexOf(&quot;/&quot;));return a&amp;&amp;console.log(&quot;Path out: &quot;,o),a&amp;&amp;console.log(&quot;Path in: &quot;,n),t.existsSync(o)||t.mkdirSync(o),t.writeFileSync(n,e),!0}catch(n){return{error:n}}}}};
+/* Minified with UglifyJS - 08-03-2020 */
+&quot;use strict&quot;;const nwSaverType=&quot;nwsaver&quot;;config.macros.nwsaver={debug:!1,handler:function(e,r,n,t,i,a){createTiddlyButton(e,&quot;Save&quot;,&quot;You are going to save your TWc&quot;,this.onclick,&quot;button saveChangesButton&quot;)},onclick:function(){const e=&quot;object&quot;==typeof nw;e&amp;&amp;require(&quot;fs&quot;);if(!e)return saveChanges(),!1;{const e=new Date,r=window.navigator.platform,n=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]],t=&quot;Win32&quot;===r?nw.__filename.replace(/\//g,&quot;\\&quot;):nw.__filename;let i=getBackupPath(t);i=&quot;Win32&quot;===r?i.replace(/\//g,&quot;\\&quot;):i;const a=config.macros.nwsaver.load(t),o=locateStoreArea(a),s=updateOriginal(a,o,t);config.macros.nwsaver.save(t,s),n.map(r=&gt;i.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(r[0]).toLowerCase()+&quot;$3&quot;)).forEach(e=&gt;config.macros.nwsaver.save(e,s)),displayMessage(`File and backups saved @ ${e.formatString(&quot;0hh:0mm&quot;)}`)}},folderentries:function(e){const r=require(&quot;fs&quot;);try{return{folderpath:e,folderentries:r.readdirSync(e)}}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},folderentriesattributes:function(e){const r=config.macros.nwsaverdev.folderentries(e),n=e=&gt;t.statSync(e),t=require(&quot;fs&quot;);try{return r.folderentries.map(e=&gt;{let t=r.folderpath+e;return{filename:e,folderpath:r.folderpath,fullpath:t,modified:n(t).ctime,created:n(t).mtime,file:n(t).isFile()}})}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},filterfile:function(e){return config.macros.nwsaverdev.folderentriesattributes(e).filter(e=&gt;e.file)},filterfolder:function(e){return config.macros.nwsaverdev.folderentriesattributes(e).filter(e=&gt;!e.file)},load:function(e){const r=require(&quot;fs&quot;);try{return r.readFileSync(e,&quot;utf8&quot;)}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},save:function(e,r){const n=require(&quot;fs&quot;);try{let t=&quot;win32&quot;===process.platform?e.substr(0,e.lastIndexOf(&quot;\\&quot;)):e.substr(0,e.lastIndexOf(&quot;/&quot;));return n.existsSync(t)||n.mkdirSync(t),n.writeFileSync(e,r),!0}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}}};
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="nwTWcAppStyle-Plugin.js" creator="Okido" modifier="Okido" created="201906101009" modified="202001061920" tags="nwtwcappstyle systemConfig nwsavergithub nwhivegithub calibsrc" changecount="1">
+<div title="nwTWcAppStyle-Plugin.js" creator="Okido" modifier="Okido" created="201906101009" modified="202003011245" tags="nwtwcappstyle systemConfig nwsavergithub nwhivegithub">
 <pre>/***
 |Name|nwTWcAppStyle-Plugin.js |
-|Version|1.0.3 |
+|Version|1.0.7 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
@@ -1045,12 +1055,12 @@ THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRES
 ***/
 //{{{
 /* JS CODE STARTS HERE */
-/* Minified with UglifyJS - 25-12-2019 */
-config.macros.nwtwcappstyle={},config.macros.nwtwcappstyle.handler=function(){if(jQuery('a[title = &quot;Search this TiddlyWiki&quot;] ').css({display:&quot;none&quot;}),jQuery(&quot;.searchField&quot;).attr({placeholder:&quot;Search&quot;}),&quot;object&quot;==typeof nw&amp;&amp;(&quot;none&quot;!==jQuery(&quot;.header&quot;).css(&quot;display&quot;)&amp;&amp;jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),0===jQuery(&quot;#windowheader&quot;).length)){const e=&quot;red&quot;,i=&quot;ddd&quot;,s=store.getTiddlerText(&quot;SiteTitle&quot;),r=`${version.major}.${version.minor}.${version.revision}`,t=&quot;&lt;svg class='svgclosebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z'/&gt;&lt;/svg&gt;&quot;,n=&quot;&lt;svg class='svgmaximizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V192h416v234z'/&gt;&lt;/svg&gt;&quot;,o=&quot;&lt;svg class='svgminimizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M480 480H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h448c17.7 0 32 14.3 32 32s-14.3 32-32 32z'/&gt;&lt;/svg&gt;&quot;;jQuery(&quot;body&quot;).css({&quot;margin-left&quot;:&quot;0px&quot;,&quot;padding-left&quot;:&quot;1px&quot;,&quot;border-left&quot;:&quot;1px solid #CCC&quot;,&quot;border-top&quot;:&quot;1px solid #CCC&quot;,&quot;border-right&quot;:&quot;1px solid #CCC&quot;,&quot;border-bottom&quot;:&quot;0px&quot;,&quot;border-radius&quot;:&quot;4px&quot;,&quot;min-height&quot;:&quot;100%&quot;,&quot;z-index&quot;:&quot;99&quot;}),jQuery(&quot;body&quot;).prepend('&lt;div id=&quot;windowheader&quot;&gt;&lt;/div&gt;'),jQuery(&quot;#backstageArea&quot;).css({padding:&quot;0em&quot;}),jQuery(&quot;#displayArea&quot;).css({&quot;margin-top&quot;:&quot;2.0em&quot;}),jQuery(&quot;#displayArea&quot;).css({padding:&quot;1% 11.6% 100% 9.2%&quot;}),jQuery(&quot;#sidebarOptions input&quot;).attr(&quot;placeholder&quot;,&quot;Search&quot;),jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),jQuery(&quot;#windowheader&quot;).append(&quot;&lt;div id='left'&gt;&lt;/div&gt;&quot;).append(`&lt;div id='center'&gt;${s} v${r}&lt;/div&gt;`).append(&quot;&lt;div id='right'&gt;&lt;/div&gt;&quot;),jQuery(&quot;#windowheader&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;space-between&quot;,&quot;background-color&quot;:&quot;#03C&quot;,width:&quot;100%&quot;,&quot;border-bottom&quot;:&quot;1px solid #ccc&quot;,&quot;border-top&quot;:&quot;1px solid #ccc&quot;,margin:&quot;-1px 0px 4px 0px&quot;,padding:&quot;1px&quot;,position:&quot;fixed&quot;,&quot;z-index&quot;:&quot;200&quot;}),config.options.chkDevelopmentMode&amp;&amp;jQuery(&quot;#windowheader&quot;).css({&quot;background-color&quot;:&quot;darkred&quot;}),jQuery(&quot;#left&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#center&quot;).css({width:&quot;34%&quot;,&quot;text-align&quot;:&quot;center&quot;,color:&quot;white&quot;,&quot;font-weight&quot;:&quot;&quot;,&quot;font-size&quot;:&quot;12px&quot;,padding:&quot;3px 0px 2px 0px&quot;}),jQuery(&quot;#right&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#right&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;flex-end&quot;,padding:&quot;2px 6px 2px 0px&quot;,height:&quot;16px&quot;}),jQuery(&quot;#right&quot;).append(o).append(n).append(t);const c={width:&quot;3%&quot;,fill:i,margin:&quot;0px 4px 0px 4px&quot;};jQuery(&quot;.svgclosebutton&quot;).css(c),jQuery(&quot;.svgmaximizebutton&quot;).css(c),jQuery(&quot;.svgminimizebutton&quot;).css(c),jQuery(&quot;.svgclosebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgmaximizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgminimizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;#windowheader&quot;).css({&quot;-webkit-app-region&quot;:&quot;drag&quot;}),jQuery(&quot;#right&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.messageArea&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.siteSubtitle&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;});const d=require(&quot;nw.gui&quot;);let p=!1;jQuery(&quot;.svgclosebutton&quot;).on(&quot;click&quot;,function(){window.close()}),jQuery(&quot;.svgminimizebutton&quot;).on(&quot;click&quot;,function(){d.Window.get().minimize()}),jQuery(&quot;.svgmaximizebutton&quot;).on(&quot;click&quot;,function(){!1===p?(d.Window.get().maximize(),p=!0):(d.Window.get().unmaximize(),p=!1)})}};
+/* Minified with UglifyJS - 01-03-2020 */
+config.macros.nwtwcappstyle={},config.macros.nwtwcappstyle.handler=function(){if(&quot;object&quot;==typeof nw&amp;&amp;(&quot;none&quot;!==jQuery(&quot;.header&quot;).css(&quot;display&quot;)&amp;&amp;jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),0===jQuery(&quot;#windowheader&quot;).length)){const e=&quot;red&quot;,i=&quot;ddd&quot;,s=store.getTiddlerText(&quot;SiteTitle&quot;),n=`${version.major}.${version.minor}.${version.revision}`,t=&quot;&lt;svg class='svgclosebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z'/&gt;&lt;/svg&gt;&quot;,o=&quot;&lt;svg class='svgmaximizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V192h416v234z'/&gt;&lt;/svg&gt;&quot;,r=&quot;&lt;svg class='svgminimizebutton' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'&gt;&lt;path d='M480 480H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h448c17.7 0 32 14.3 32 32s-14.3 32-32 32z'/&gt;&lt;/svg&gt;&quot;;jQuery(&quot;body&quot;).css({&quot;margin-left&quot;:&quot;0px&quot;,&quot;padding-left&quot;:&quot;1px&quot;,&quot;border-left&quot;:&quot;1px solid #CCC&quot;,&quot;border-top&quot;:&quot;1px solid #CCC&quot;,&quot;border-right&quot;:&quot;1px solid #CCC&quot;,&quot;border-bottom&quot;:&quot;0px&quot;,&quot;border-radius&quot;:&quot;4px&quot;,&quot;min-height&quot;:&quot;100%&quot;,&quot;z-index&quot;:&quot;99&quot;}),jQuery(&quot;body&quot;).prepend('&lt;div id=&quot;windowheader&quot;&gt;&lt;/div&gt;'),jQuery(&quot;#backstageArea&quot;).css({padding:&quot;0em&quot;}),jQuery(&quot;#displayArea&quot;).css({&quot;margin-top&quot;:&quot;2.3em&quot;}),jQuery(&quot;#displayArea&quot;).css({padding:&quot;1% 11.6% 100% 9.2%&quot;}),jQuery(&quot;.header&quot;).css({display:&quot;none&quot;}),jQuery(&quot;#windowheader&quot;).append(&quot;&lt;div id='left'&gt;&lt;/div&gt;&quot;).append(`&lt;div id='center'&gt;${s} v${n}&lt;/div&gt;`).append(&quot;&lt;div id='right'&gt;&lt;/div&gt;&quot;),jQuery(&quot;#windowheader&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;space-between&quot;,&quot;background-color&quot;:&quot;#03C&quot;,width:&quot;100%&quot;,&quot;border-bottom&quot;:&quot;1px solid #ccc&quot;,&quot;border-top&quot;:&quot;1px solid #ccc&quot;,margin:&quot;-1px 0px 4px 0px&quot;,padding:&quot;1px&quot;,position:&quot;fixed&quot;,&quot;z-index&quot;:&quot;200&quot;}),config.options.chkDevelopmentMode&amp;&amp;jQuery(&quot;#windowheader&quot;).css({&quot;background-color&quot;:&quot;darkred&quot;}),jQuery(&quot;#left&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#center&quot;).css({width:&quot;34%&quot;,&quot;text-align&quot;:&quot;center&quot;,color:&quot;white&quot;,&quot;font-weight&quot;:&quot;&quot;,&quot;font-size&quot;:&quot;12px&quot;,padding:&quot;3px 0px 2px 0px&quot;}),jQuery(&quot;#right&quot;).css({width:&quot;33%&quot;}),jQuery(&quot;#right&quot;).css({display:&quot;flex&quot;,&quot;flex-direction&quot;:&quot;row&quot;,&quot;flex-wrap&quot;:&quot;nowrap&quot;,&quot;justify-content&quot;:&quot;flex-end&quot;,padding:&quot;2px 6px 2px 0px&quot;,height:&quot;16px&quot;}),jQuery(&quot;#right&quot;).append(r).append(o).append(t);const c={width:&quot;3%&quot;,fill:i,margin:&quot;0px 4px 0px 4px&quot;};jQuery(&quot;.svgclosebutton&quot;).css(c),jQuery(&quot;.svgmaximizebutton&quot;).css(c),jQuery(&quot;.svgminimizebutton&quot;).css(c),jQuery(&quot;.svgclosebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgmaximizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;.svgminimizebutton&quot;).hover(function(){jQuery(this).css({fill:e})},function(){jQuery(this).css({fill:i})}),jQuery(&quot;#windowheader&quot;).css({&quot;-webkit-app-region&quot;:&quot;drag&quot;}),jQuery(&quot;#right&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.messageArea&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;}),jQuery(&quot;.siteSubtitle&quot;).css({&quot;-webkit-app-region&quot;:&quot;no-drag&quot;});const d=require(&quot;nw.gui&quot;);let p=!1;jQuery(&quot;.svgclosebutton&quot;).on(&quot;click&quot;,function(){window.close()}),jQuery(&quot;.svgminimizebutton&quot;).on(&quot;click&quot;,function(){d.Window.get().minimize()}),jQuery(&quot;.svgmaximizebutton&quot;).on(&quot;click&quot;,function(){!1===p?(d.Window.get().maximize(),p=!0):(d.Window.get().unmaximize(),p=!1)})}};
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="zzz-config" creator="Okido" modifier="Okido" created="201904151358" modified="202001061923" tags="systemConfig" changecount="1">
+<div title="zzz-config" creator="Okido" modifier="Okido" created="201904151358" modified="202003081501" tags="systemConfig" changecount="2">
 <pre>//{{{
 config.options.txtBackupFolder = &quot;backup&quot;;
 config.options.txtUserName = &quot;Okido&quot;;
