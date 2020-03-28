@@ -526,288 +526,105 @@ noscript {display:none;} /* Fixes a feature in Firefox 1.5.0.2 where print previ
 </div>
 <!--POST-SHADOWAREA-->
 <div id="storeArea">
-<div title="LoadTiddlersPlugin" creator="Okido" modifier="Okido" created="201910190844" modified="201910190929" tags="systemConfig">
+<div title="InlineJavascriptPlugin" modifier="Okido" created="200512130544" modified="201910231424" tags="systemConfig">
 <pre>/***
-|Name|LoadTiddlersPlugin|
-|Source|http://www.TiddlyTools.com/#LoadTiddlersPlugin|
-|Documentation|http://www.TiddlyTools.com/#LoadTiddlersPluginInfo|
-|Version|3.9.1|
+|Name|InlineJavascriptPlugin|
+|Source|http://www.TiddlyTools.com/#InlineJavascriptPlugin|
+|Documentation|http://www.TiddlyTools.com/#InlineJavascriptPluginInfo|
+|Version|1.9.6|
 |Author|Eric Shulman|
 |License|http://www.TiddlyTools.com/#LegalStatements|
 |~CoreVersion|2.1|
 |Type|plugin|
-|Description|macro for automated updates or one-click installations of tiddlers from remote sources|
+|Description|Insert Javascript executable code directly into your tiddler content.|
+''Call directly into TW core utility routines, define new functions, calculate values, add dynamically-generated TiddlyWiki-formatted output'' into tiddler content, or perform any other programmatic actions each time the tiddler is rendered.
 !!!!!Documentation
-&gt;see [[LoadTiddlersPluginInfo]]
-!!!!!Configuration
-&lt;&lt;&lt;
-&lt;&lt;option chkLoadTiddlersShowReport&gt;&gt;after loading tiddlers, automatically display [[ImportedTiddlers]] (if created)
-__password-protected server settings //(optional, if needed)//:__
-&gt;username: &lt;&lt;option txtRemoteUsername&gt;&gt; password: &lt;&lt;option txtRemotePassword&gt;&gt;
-&gt;{{{usage: &lt;&lt;option txtRemoteUsername&gt;&gt; &lt;&lt;option txtRemotePassword&gt;&gt;}}}
-&gt;''note: these settings are also used by [[ExternalTiddlersPlugin]] and [[ImportTiddlersPlugin]]''
-&lt;&lt;&lt;
+&gt;see [[InlineJavascriptPluginInfo]]
 !!!!!Revisions
 &lt;&lt;&lt;
-2017.10.01 3.9.1 removed UTF conversion
-2010.08.11 3.9.0 added 'autosave' optional param
-|please see [[LoadTiddlersPluginInfo]] for additional revision details|
-2005.07.20 1.0.0 Initial Release
+2010.12.15 1.9.6 allow (but ignore) type=&quot;...&quot; syntax
+|please see [[InlineJavascriptPluginInfo]] for additional revision details|
+2005.11.08 1.0.0 initial release
 &lt;&lt;&lt;
 !!!!!Code
 ***/
 //{{{
-version.extensions.LoadTiddlersPlugin= {major: 3, minor: 9, revision: 1, date: new Date(2011,9,01)};
+version.extensions.InlineJavascriptPlugin= {major: 1, minor: 9, revision: 6, date: new Date(2010,12,15)};
 
-if (config.options.chkLoadTiddlersShowReport===undefined)
-	config.options.chkLoadTiddlersShowReport=true;
-
-config.macros.loadTiddlers = {
-	label: '',
-	tip: &quot;add/update tiddlers from '%0'&quot;,
-	lockedTag: 'noReload',	// if existing tiddler has this tag value, don't overwrite it, even if inbound tiddler is newer
-	askMsg: 'Please enter a local path/filename or a remote URL',
-	openMsg: 'Opening %0',
-	openErrMsg: 'Could not open %0 - error=%1',
-	readMsg: 'Read %0 bytes from %1',
-	foundMsg: 'Found %0 tiddlers in %1',
-	nochangeMsg: &quot;'%0' is up-to-date... skipped.&quot;,
-	lockedMsg: &quot;'%0' is tagged '%1'... skipped.&quot;,
-	skippedMsg: 'skipped (cancelled by user)',
-	loadedMsg: 'Loaded %0 of %1 tiddlers from %2',
-	reportTitle: 'ImportedTiddlers',
-	warning: &quot;Warning!!  Processing '%0' as a systemConfig (plugin) tiddler may produce unexpected results! Press OK to proceed.&quot;,
-	autosaveMsg: 'Save current document?  Press OK to proceed.',
-	handler: function(place,macroName,params) {
-		var label=(params[0] &amp;&amp; params[0].substr(0,6)=='label:')?params.shift().substr(6):this.label;
-		var tip=(params[0] &amp;&amp; params[0].substr(0,7)=='prompt:')?params.shift().substr(7):this.tip;
-		var filter='updates';
-		if (params[0] &amp;&amp; (params[0]=='all' || params[0]=='new' || params[0]=='changes' || params[0]=='updates'
-			|| params[0].substr(0,8)=='tiddler:' || params[0].substr(0,4)=='tag:'))
-			filter=params.shift();
-		var src=params.shift(); if (!src || !src.length) return; // filename is required
-		var quiet=(params[0]=='quiet'); if (quiet) params.shift();
-		var ask=(params[0]=='confirm'); if (ask) params.shift();
-		var force=(params[0]=='force'); if (force) params.shift();
-		var init=(params[0]=='init'); if (init) params.shift();
-		var nodirty=(params[0]=='nodirty'); if (nodirty) params.shift();
-		var norefresh=(params[0]=='norefresh'); if (norefresh) params.shift();
-		var noreport=(params[0]=='noreport'); if (noreport) params.shift();
-		var autosave=(params[0]=='autosave'); if (autosave) params.shift();
-		this.newTags=[]; if (params[0]) this.newTags=params; // any remaining params are used as 'autotags'
-		var flags={quiet:quiet, ask:ask, filter:filter, force:force, init:init,
-			nodirty:nodirty, norefresh:norefresh, noreport:noreport, autosave:autosave};
-		if (label.trim().length) { // CLICKABLE LINK
-			createTiddlyButton(place,
-				label.format([src.replace(/%20/g,' ')]),
-				tip.format([src.replace(/%20/g,' ')]),
-				function() {
-					var cml=config.macros.loadTiddlers;
-					cml.loadFile(src,cml.doImport,flags);
-					return false;
-				})
-		}
-		else // IMMEDIATE IMPORT
-			this.loadFile(src,this.doImport,flags);
-	},
-	loadFile: function(src,callback,params) {
-		var quiet=params.quiet;
-		if (src=='ask') src=prompt(this.askMsg);
-		if (src==undefined || !src.length) return null; // filename is required
-		if (!quiet) clearMessage();
-		if (!quiet) displayMessage(this.openMsg.format([src.replace(/%20/g,' ')]));
-		// if working locally and src is not a URL, read from local filesystem
-		if (document.location.protocol=='file:' &amp;&amp; src.substr(0,5)!='http:' &amp;&amp; src.substr(0,5)!='file:') {
-			var txt=loadFile(src);
-			if (!txt) { // file didn't load, might be relative path.. try fixup
-				var pathPrefix=document.location.href;  // get current document path and trim off filename
-				var slashpos=pathPrefix.lastIndexOf('/'); if (slashpos==-1) slashpos=pathPrefix.lastIndexOf('\\');
-				if (slashpos!=-1 &amp;&amp; slashpos!=pathPrefix.length-1) pathPrefix=pathPrefix.substr(0,slashpos+1);
-				src=pathPrefix+src;
-				if (pathPrefix.substr(0,5)!='http:') src=getLocalPath(src);
-				var txt=loadFile(src);
+config.formatters.push( {
+	name: &quot;inlineJavascript&quot;,
+	match: &quot;\\&lt;script&quot;,
+	lookahead: &quot;\\&lt;script(?: type=\\\&quot;[^\\\&quot;]*\\\&quot;)?(?: src=\\\&quot;([^\\\&quot;]*)\\\&quot;)?(?: label=\\\&quot;([^\\\&quot;]*)\\\&quot;)?(?: title=\\\&quot;([^\\\&quot;]*)\\\&quot;)?(?: key=\\\&quot;([^\\\&quot;]*)\\\&quot;)?( show)?\\&gt;((?:.|\\n)*?)\\&lt;/script\\&gt;&quot;,
+	handler: function(w) {
+		var lookaheadRegExp = new RegExp(this.lookahead,&quot;mg&quot;);
+		lookaheadRegExp.lastIndex = w.matchStart;
+		var lookaheadMatch = lookaheadRegExp.exec(w.source)
+		if(lookaheadMatch &amp;&amp; lookaheadMatch.index == w.matchStart) {
+			var src=lookaheadMatch[1];
+			var label=lookaheadMatch[2];
+			var tip=lookaheadMatch[3];
+			var key=lookaheadMatch[4];
+			var show=lookaheadMatch[5];
+			var code=lookaheadMatch[6];
+			if (src) { // external script library
+				var script = document.createElement(&quot;script&quot;); script.src = src;
+				document.body.appendChild(script); document.body.removeChild(script);
 			}
-			if (!txt) { // file still didn't load, report error
-				if (!quiet) displayMessage(this.openErrMsg.format([src.replace(/%20/g,' '),'(unknown)']));
-			} else {
-				if (!quiet) displayMessage(this.readMsg.format([txt.length,src.replace(/%20/g,' ')]));
-				// if (version.major+version.minor*.1+version.revision*.01!=2.52)
-				//	txt=convertUTF8ToUnicode(txt);
-				if (callback) callback(true,params,txt,src,null);
-			}
-		} else { // use XMLHttpRequest
-			doHttp('GET',src,null,null,config.options.txtRemoteUsername,config.options.txtRemotePassword,callback,params,null);
-		}
-	},
-	readTiddlersFromHTML: function(html) {
-		// for TW2.2+
-		if (TiddlyWiki.prototype.importTiddlyWiki!=undefined) {
-			var remoteStore=new TiddlyWiki();
-			remoteStore.importTiddlyWiki(html);
-			return remoteStore.getTiddlers('title');
-		}
-	},
-	readTiddlersFromCSV: function(CSV) {
-		var remoteStore=new TiddlyWiki();
-		// GET NAMES
-		var lines=CSV.replace(/\r/g,'').split('\n');
-		var names=lines.shift().replace(/&quot;/g,'').split(',');
-		CSV=lines.join('\n');
-		// ENCODE commas and newlines within quoted values
-		var comma='!~comma~!'; var commaRE=new RegExp(comma,'g');
-		var newline='!~newline~!'; var newlineRE=new RegExp(newline,'g');
-		CSV=CSV.replace(/&quot;([^&quot;]*?)&quot;/g,
-			function(x){ return x.replace(/\,/g,comma).replace(/\n/g,newline); });
-		// PARSE lines
-		var lines=CSV.split('\n');
-		for (var i=0; i&lt;lines.length; i++) { if (!lines[i].length) continue;
-			var values=lines[i].split(',');
-			// DECODE commas, newlines, and doubled-quotes, and remove enclosing quotes (if any)
-			for (var v=0; v&lt;values.length; v++)
-				values[v]=values[v].replace(commaRE,',').replace(newlineRE,'\n')
-					.replace(/^&quot;|&quot;$/g,'').replace(/&quot;&quot;/g,'&quot;');
-			// EXTRACT tiddler values
-			var title=''; var text=''; var tags=[]; var fields={};
-			var created=null; var when=new Date(); var who=config.options.txtUserName;
-			for (var v=0; v&lt;values.length; v++) { var val=values[v];
-				if (names[v]) switch(names[v].toLowerCase()) {
-					case 'title':	title=val.replace(/\[\]\|/g,'_'); break;
-					case 'created': created=new Date(val); break;
-					case 'modified':when=new Date(val); break;
-					case 'modifier':who=val; break;
-					case 'text':	text=val; break;
-					case 'tags':	tags=val.readBracketedList(); break;
-					default:	fields[names[v].toLowerCase()]=val; break;
+			if (code) { // inline code
+				if (show) // display source in tiddler
+					wikify(&quot;{{{\n&quot;+lookaheadMatch[0]+&quot;\n}}}\n&quot;,w.output);
+				if (label) { // create 'onclick' command link
+					var link=createTiddlyElement(w.output,&quot;a&quot;,null,&quot;tiddlyLinkExisting&quot;,wikifyPlainText(label));
+					var fixup=code.replace(/document.write\s*\(/gi,'place.bufferedHTML+=(');
+					link.code=&quot;function _out(place,tiddler){&quot;+fixup+&quot;\n};_out(this,this.tiddler);&quot;
+					link.tiddler=w.tiddler;
+					link.onclick=function(){
+						this.bufferedHTML=&quot;&quot;;
+						try{ var r=eval(this.code);
+							if(this.bufferedHTML.length || (typeof(r)===&quot;string&quot;)&amp;&amp;r.length)
+								var s=this.parentNode.insertBefore(document.createElement(&quot;span&quot;),this.nextSibling);
+							if(this.bufferedHTML.length)
+								s.innerHTML=this.bufferedHTML;
+							if((typeof(r)===&quot;string&quot;)&amp;&amp;r.length) {
+								wikify(r,s,null,this.tiddler);
+								return false;
+							} else return r!==undefined?r:false;
+						} catch(e){alert(e.description||e.toString());return false;}
+					};
+					link.setAttribute(&quot;title&quot;,tip||&quot;&quot;);
+					var URIcode='javascript:void(eval(decodeURIComponent(%22(function(){try{';
+					URIcode+=encodeURIComponent(encodeURIComponent(code.replace(/\n/g,' ')));
+					URIcode+='}catch(e){alert(e.description||e.toString())}})()%22)))';
+					link.setAttribute(&quot;href&quot;,URIcode);
+					link.style.cursor=&quot;pointer&quot;;
+					if (key) link.accessKey=key.substr(0,1); // single character only
+				}
+				else { // run script immediately
+					var fixup=code.replace(/document.write\s*\(/gi,'place.innerHTML+=(');
+					var c=&quot;function _out(place,tiddler){&quot;+fixup+&quot;\n};_out(w.output,w.tiddler);&quot;;
+					try	 { var out=eval(c); }
+					catch(e) { out=e.description?e.description:e.toString(); }
+					if (out &amp;&amp; out.length) wikify(out,w.output,w.highlightRegExp,w.tiddler);
 				}
 			}
-			// CREATE tiddler in temporary store
-			if (title.length)
-				remoteStore.saveTiddler(title,title,text,who,when,tags,fields,true,created||when);
-		}
-		return remoteStore.getTiddlers('title');
-	},
-	createTiddlerFromFile: function(src,txt) {
-		var t=new Tiddler();
-		var pos=src.lastIndexOf(&quot;/&quot;); if (pos==-1) pos=src.lastIndexOf(&quot;\\&quot;);
-		t.title=pos==-1?src:src.substr(pos+1);
-		t.text=txt;
-		t.created=t.modified=new Date();
-		t.modifier=config.options.txtUserName;
-		if (src.substr(src.length-3,3)=='.js') t.tags=['systemConfig'];
-		return [t];
-	},
-	doImport: function(status,params,html,src,xhr) {
-		var cml=config.macros.loadTiddlers; // abbrev
-		src=src.split('?')[0]; // strip off &quot;?nocache=...&quot;
-		if (!status) {
-			displayMessage(cml.openErrMsg.format([src.replace(/%20/g,' '),xhr.status]));
-			return false;
-		}
-		var quiet=params.quiet;
-		var ask=params.ask;
-		var filter=params.filter;
-		var force=params.force;
-		var init=params.init;
-		var nodirty=params.nodirty;
-		var norefresh=params.norefresh;
-		var noreport=params.noreport;
-		var autosave=params.autosave;
-		var tiddlers = cml.readTiddlersFromHTML(html);
-		if (!tiddlers||!tiddlers.length) tiddlers=cml.readTiddlersFromCSV(html);
-		if (!tiddlers||!tiddlers.length) tiddlers=cml.createTiddlerFromFile(src,html);
-		var count=tiddlers?tiddlers.length:0;
-		if (!quiet) displayMessage(cml.foundMsg.format([count,src.replace(/%20/g,' ')]));
-		var wasDirty=store.isDirty();
-		store.suspendNotifications();
-		var count=0;
-		if (tiddlers) for (var t=0;t&lt;tiddlers.length;t++) {
-			var inbound = tiddlers[t];
-			var theExisting = store.getTiddler(inbound.title);
-			if (inbound.title==cml.reportTitle)
-				continue; // skip 'ImportedTiddlers' history from the other document...
-			if (theExisting &amp;&amp; theExisting.tags.contains(cml.lockedTag)) {
-				if (!quiet) displayMessage(cml.lockedMsg.format([theExisting.title,cml.lockedTag]));
-				continue; // skip existing tiddler if tagged with 'noReload'
-			}
-			// apply the all/new/changes/updates filter (if any)
-			if (filter &amp;&amp; filter!='all') {
-				if ((filter=='new') &amp;&amp; theExisting) // skip existing tiddlers
-					continue;
-				if ((filter=='changes') &amp;&amp; !theExisting) // skip new tiddlers
-					continue;
-				if ((filter.substr(0,4)=='tag:') &amp;&amp; inbound.tags.indexOf(filter.substr(4))==-1) // must match specific tag value
-					continue;
-				if ((filter.substr(0,8)=='tiddler:') &amp;&amp; inbound.title!=filter.substr(8)) // must match specific tiddler name
-					continue;
-				if (!force &amp;&amp; store.tiddlerExists(inbound.title) &amp;&amp; ((theExisting.modified.getTime()-inbound.modified.getTime())&gt;=0)) {
-					var msg=cml.nochangeMsg;
-					if (!quiet&amp;&amp;msg.length) displayMessage(msg.format([inbound.title]));
-					continue;
-				}
-			}
-			// get confirmation if required
-			var msg=(theExisting?'Update':'Add')+&quot; tiddler '&quot;+inbound.title+&quot;'\n&quot;
-				+'from '+src.replace(/%20/g,' ')+'\n\nOK to proceed?';
-			if (ask &amp;&amp; !confirm(msg))
-				{ tiddlers[t].status=cml.skippedMsg; continue; }
-			// DO IT!
-			var tags=new Array().concat(inbound.tags,cml.newTags);
-	                store.saveTiddler(inbound.title, inbound.title, inbound.text, inbound.modifier,
-				inbound.modified, tags, inbound.fields, true, inbound.created);
-			// force creation date to imported value - needed for TW2.1.3 or earlier
-	                store.fetchTiddler(inbound.title).created = inbound.created;
-			tiddlers[t].status=theExisting?'updated':'added'
-			if (init &amp;&amp; tags.contains('systemConfig') &amp;&amp; !tags.contains('systemConfigDisable')) {
-				var ok=true;
-				if (ask||!quiet) ok=confirm(cml.warning.format([inbound.title]))
-				if (ok) { // run the plugin
-					try { window.eval(inbound.text); tiddlers[t].status+=' (plugin initialized)'; }
-					catch(ex) { displayMessage(config.messages.pluginError.format([exceptionText(ex)])); }
-				}
-			}
-			count++;
-		}
-		store.resumeNotifications();
-		if (count) {
-			// set/clear 'unsaved changes' flag, refresh page display, and generate a report
-			store.setDirty(wasDirty||!nodirty);
-			if (!norefresh) {
-				story.forEachTiddler(function(t,e){
-					if(!story.isDirty(t))story.refreshTiddler(t,null,true)
-				});
-				store.notifyAll();
-			}
-			if (!noreport) cml.report(src,tiddlers,count,quiet);
-		}
-		if (!quiet||count) // force msg if tiddlers were loaded
-			displayMessage(cml.loadedMsg.format([count,tiddlers.length,src.replace(/%20/g,' ')]));
-		if (count &amp;&amp; autosave &amp;&amp; (!ask||confirm(cml.autosaveMsg))) saveChanges();
-	},
-	showReport: true,
-	report: function(src,tiddlers,count,quiet) {
-		var cml=config.macros.loadTiddlers; // abbrev
-		// format the new report content
-		var newText = 'On '+(new Date()).toLocaleString()+', ';
-		newText += config.options.txtUserName+' loaded '+count+' tiddlers ';
-		newText += 'from\n[['+src+'|'+src+']]:\n';
-		newText += '&lt;&lt;&lt;\n';
-		for (var t=0; t&lt;tiddlers.length; t++)
-			if (tiddlers[t].status)
-				newText += '#[['+tiddlers[t].title+']] - '+tiddlers[t].status+'\n';
-		newText += '&lt;&lt;&lt;\n';
-		var title=cml.reportTitle;
-		var currText='';
-		var t=store.getTiddler(title);
-		if (t) currText=(t.text.length?'\n----\n':'')+t.text;
-		store.saveTiddler(title, title, newText+currText,
-			config.options.txtUserName, new Date(),	t?t.tags:null, t?t.fields:null);
-		if (!quiet) {
-			if (config.options.chkLoadTiddlersShowReport)
-				story.displayTiddler(null,title);
-			story.refreshTiddler(title,null,true);
+			w.nextMatch = lookaheadMatch.index + lookaheadMatch[0].length;
 		}
 	}
+} )
+//}}}
+
+// // Backward-compatibility for TW2.1.x and earlier
+//{{{
+if (typeof(wikifyPlainText)==&quot;undefined&quot;) window.wikifyPlainText=function(text,limit,tiddler) {
+	if(limit &gt; 0) text = text.substr(0,limit);
+	var wikifier = new Wikifier(text,formatter,null,tiddler);
+	return wikifier.wikifyPlain();
 }
+//}}}
+
+// // GLOBAL FUNCTION: $(...) -- 'shorthand' convenience syntax for document.getElementById()
+//{{{
+if (typeof($)=='undefined') { function $(id) { return document.getElementById(id.replace(/^#/,'')); } }
 //}}}</pre>
 </div>
 <div title="SideBarOptions" creator="Okido" modifier="Okido" created="201904151324" modified="201910191609">
@@ -879,10 +696,10 @@ config.macros.nwreload={},config.macros.nwreload.handler=function(o,n,c,i,a,d){c
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
-<div title="nwSaver-Plugin.js" creator="Okido" modifier="Okido" created="201901261406" modified="202003081456" tags="nwsaver systemConfig nwsavergithub nwhivegithub actionplugin calibsrc">
+<div title="nwSaver-Plugin.js" creator="Okido" modifier="Okido" created="201901261406" modified="202003281739" tags="nwsaver systemConfig" changecount="2">
 <pre>/***
 |Name|nwSaver-Plugin.js |
-|Version|1.1.7 |
+|Version|1.2.0 |
 |Description| |
 |Status|EXPERIMENTAL - SUBJECT TO CHANGE |
 !!!Documentation
@@ -891,14 +708,16 @@ This plugin makes saving &lt;nowiki&gt;TWc&lt;/nowiki&gt; as a nw.js application
 &lt;&lt;&lt;
 !!!Usage
 &lt;&lt;&lt;
-Besides saving &lt;nowiki&gt;TWc&lt;/nowiki&gt; this plugin provides basic I/O access:
+Besides saving &lt;nowiki&gt;TWc&lt;/nowiki&gt; this plugin provides basic I/O functions:
 
   config.macros.nwsaver.folderentries(folderPath) &gt;&gt; returns an object with the key/value for folderpath and entries as an array
   config.macros.nwsaver.folderentriesattributes(folderPath) &gt;&gt; returns an object with the file and folder attributes
-  config.macros.nwsaver.filterfile(folderPath) &gt;&gt; filter by files
-  config.macros.nwsaver.filterfolder(folderPath) &gt;&gt; filter by folders
+  config.macros.nwsaver.folderentriesfile(folderPath) &gt;&gt; filter by files
+  config.macros.nwsaver.folderentriesfolder(folderPath) &gt;&gt; filter by folders
   config.macros.nwsaver.load(fullPath) &gt;&gt; load a file from disk, returns the content
   config.macros.nwsaver.save(fullPath, content) &gt;&gt; save a file to disk
+  config.macros.nwsaver.copy(fullPathSRC, fullPathDST) &gt;&gt; copies a file
+  config.macros.nwsaver.delete(fullPath) &gt;&gt; delete a file  
 &lt;&lt;&lt;
 !!!Configuration
 &lt;&lt;&lt;
@@ -917,6 +736,8 @@ chkHttpReadOnly: false;
 &lt;&lt;&lt;
 !!!Revisions
 &lt;&lt;&lt;
+2020.03.28 1.2.0 Renamed function names, added functions to copy and delete files
+2020.03.10 1.1.8 Added decodeURI, special characters need special encoding
 2020.03.08 1.1.7 Added basic I/O functions
 2020.02.16 1.1.6 Removed save function encapsulation, the saver can be used by other functions too
 2020.01.03 1.1.5 Fixed the first load view/edit mode problem 
@@ -949,8 +770,8 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
 ***/
 //{{{
 /* JS CODE STARTS HERE */
-/* Minified with UglifyJS - 08-03-2020 */
-&quot;use strict&quot;;const nwSaverType=&quot;nwsaver&quot;;config.macros.nwsaver={debug:!1,handler:function(e,r,n,t,i,a){createTiddlyButton(e,&quot;Save&quot;,&quot;You are going to save your TWc&quot;,this.onclick,&quot;button saveChangesButton&quot;)},onclick:function(){const e=&quot;object&quot;==typeof nw;e&amp;&amp;require(&quot;fs&quot;);if(!e)return saveChanges(),!1;{const e=new Date,r=window.navigator.platform,n=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]],t=&quot;Win32&quot;===r?nw.__filename.replace(/\//g,&quot;\\&quot;):nw.__filename;let i=getBackupPath(t);i=&quot;Win32&quot;===r?i.replace(/\//g,&quot;\\&quot;):i;const a=config.macros.nwsaver.load(t),o=locateStoreArea(a),s=updateOriginal(a,o,t);config.macros.nwsaver.save(t,s),n.map(r=&gt;i.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(r[0]).toLowerCase()+&quot;$3&quot;)).forEach(e=&gt;config.macros.nwsaver.save(e,s)),displayMessage(`File and backups saved @ ${e.formatString(&quot;0hh:0mm&quot;)}`)}},folderentries:function(e){const r=require(&quot;fs&quot;);try{return{folderpath:e,folderentries:r.readdirSync(e)}}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},folderentriesattributes:function(e){const r=config.macros.nwsaverdev.folderentries(e),n=e=&gt;t.statSync(e),t=require(&quot;fs&quot;);try{return r.folderentries.map(e=&gt;{let t=r.folderpath+e;return{filename:e,folderpath:r.folderpath,fullpath:t,modified:n(t).ctime,created:n(t).mtime,file:n(t).isFile()}})}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},filterfile:function(e){return config.macros.nwsaverdev.folderentriesattributes(e).filter(e=&gt;e.file)},filterfolder:function(e){return config.macros.nwsaverdev.folderentriesattributes(e).filter(e=&gt;!e.file)},load:function(e){const r=require(&quot;fs&quot;);try{return r.readFileSync(e,&quot;utf8&quot;)}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},save:function(e,r){const n=require(&quot;fs&quot;);try{let t=&quot;win32&quot;===process.platform?e.substr(0,e.lastIndexOf(&quot;\\&quot;)):e.substr(0,e.lastIndexOf(&quot;/&quot;));return n.existsSync(t)||n.mkdirSync(t),n.writeFileSync(e,r),!0}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}}};
+/* Minified with UglifyJS - 28-03-2020 */
+&quot;use strict&quot;;const nwSaverType=&quot;nwsaver&quot;;config.macros.nwsaver={debug:!1,handler:function(e,r,n,t,i,o){createTiddlyButton(e,&quot;Save&quot;,&quot;You are going to save your TWc&quot;,this.onclick,&quot;button saveChangesButton&quot;)},onclick:function(){const e=&quot;object&quot;==typeof nw;e&amp;&amp;require(&quot;fs&quot;);if(!e)return saveChanges(),!1;{const e=new Date,r=window.navigator.platform,n=config.options.nwSaver||[[&quot;YYYY&quot;],[&quot;MMM&quot;],[&quot;ddd&quot;],[&quot;latest&quot;,0]],t=&quot;Win32&quot;===r?nw.__filename.replace(/\//g,&quot;\\&quot;):nw.__filename;let i=getBackupPath(t);i=&quot;Win32&quot;===r?i.replace(/\//g,&quot;\\&quot;):i;const o=config.macros.nwsaver.load(t),c=locateStoreArea(o),a=updateOriginal(o,c,t);config.macros.nwsaver.save(t,a),n.map(r=&gt;i.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,&quot;$1&quot;+e.formatString(r[0]).toLowerCase()+&quot;$3&quot;)).forEach(e=&gt;config.macros.nwsaver.save(e,a)),displayMessage(`File and backups saved @ ${e.formatString(&quot;0hh:0mm&quot;)}`)}},folderentries:function(e){const r=require(&quot;fs&quot;);try{return{folderpath:e,folderentries:r.readdirSync(e)}}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},folderentriesattributes:function(e){const r=config.macros.nwsaver.folderentries(e),n=e=&gt;t.statSync(e),t=require(&quot;fs&quot;);try{return r.folderentries.map(e=&gt;{let t=r.folderpath+e;return{filename:e,folderpath:r.folderpath,fullpath:t,modified:n(t).ctime,created:n(t).mtime,file:n(t).isFile()}})}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},folderentriesfile:function(e){return config.macros.nwsaver.folderentriesattributes(e).filter(e=&gt;e.file)},folderentriesfolder:function(e){return config.macros.nwsaver.folderentriesattributes(e).filter(e=&gt;!e.file)},delete:function(e){const r=require(&quot;fs&quot;);try{return r.unlinkSync(decodeURI(e))}catch(e){alert(&quot;Error occured during deleting: ace-Plugin.js\n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},copy:function(e,r){const n=require(&quot;fs&quot;);try{return n.copyFileSync(decodeURI(e),decodeURI(r))}catch(e){alert(&quot;Error occured during copying in: ace-Plugin.js\n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},load:function(e){const r=require(&quot;fs&quot;);e=decodeURI(e);try{return r.readFileSync(e,&quot;utf8&quot;)}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}},save:function(e,r){const n=require(&quot;fs&quot;);try{let t=&quot;win32&quot;===process.platform?e.substr(0,e.lastIndexOf(&quot;\\&quot;)):e.substr(0,e.lastIndexOf(&quot;/&quot;));return t=t.replace(/(\s+)/g,&quot;\\$1&quot;),n.existsSync(t)||n.mkdirSync(t,{recursive:!0}),n.writeFileSync(e,r),!0}catch(e){alert(&quot;Error occured in: ace-Plugin.js\nFolder reading error: \n&quot;+JSON.stringify(e,2,&quot;\t&quot;))}}};
 /* JS CODE ENDS HERE */
 //}}}</pre>
 </div>
