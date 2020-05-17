@@ -1,0 +1,20 @@
+17.05.2020 1.2.4 Fixed saving issue when there are spaces %20 in the filename, use process.platform to detect platform
+10.05.2020 1.2.3 Added a function to open a file with the default application
+05.05.2020 1.2.2 Fixed the texts used for error warnings
+05.04.2020 1.2.1 Modified and created bug removed, mtime and ctime are properly mapped now
+28.03.2020 1.2.0 Renamed function names, added functions to copy and delete files
+10.03.2020 1.1.8 Added decodeURI, special characters need special encoding
+08.03.2020 1.1.7 Added basic I/O functions
+16.02.2020 1.1.6 Removed save function encapsulation, the saver can be used by other functions too
+03.01.2020 1.1.5 Fixed the first load view/edit mode problem
+10.11.2019 1.1.4 Made some minor changes and added remarks to the source
+19.10.2019 1.1.3 Added tags to make distribution with the LoadTiddlersPlugin easy
+15.09.2019 1.1.2 Minified the plugin code includding the TWc macro code
+16.06.2019 1.1.1 Made backup sequency definable in systemConfig tiddler
+13.06.2019 1.1.0 Moved the code in the external nwTWcSaver.js into this plugin
+17.04.2019 1.0.6 Added win path coding in nwTWcSaver.js
+02.04.2019 1.0.5 Removed hard coded paths for WinXX
+10.03.2019 1.0.4 Updated documentation and fixed date format
+25.02.2019 1.0.3 Removed moment.js dependency
+22.02.2019 1.0.2 Added win32 path fix
+21.02.2019 1.0.1 Merged all files to nwTWcSaver.js
