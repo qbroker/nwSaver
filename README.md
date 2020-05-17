@@ -1,4 +1,4 @@
-# nwTWcSaver
+# nwSaver
 Save TiddlyWiki classic in nw.js
 
 ## Steps to install a TWc in nw.js environment
