@@ -1,4 +1,6 @@
-17.05.2020 1.2.4 Fixed saving issue when there are spaces %20 in the filename, use process.platform to detect platform
+26.06.2020 1.2.6 Added "createpath" as an I/O function
+26.05.2020 1.2.5 Fixed "openfile" with default aplication, spaces are handled different on the Linux and Windows command line
+17.05.2020 1.2.4 Fixed saving issue when there are spaces %20 in the filename, use process.platform to detect the platform, name changed to nwSaver-Plugin.js
 10.05.2020 1.2.3 Added a function to open a file with the default application
 05.05.2020 1.2.2 Fixed the texts used for error warnings
 05.04.2020 1.2.1 Modified and created bug removed, mtime and ctime are properly mapped now
