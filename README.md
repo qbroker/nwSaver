@@ -36,7 +36,7 @@ https://github.com/TiddlyWiki/TiddlyWiki
 * In package.json the path to the wiki is defined in "main": "./data/nwSaver.html"
 * If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
-# nwHive
+## nwHive
 nwHive moved to its own repo https://github.com/nwOkido/nwHive
 
 
