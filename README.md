@@ -23,11 +23,6 @@ Save TiddlyWiki classic in nw.js
 * Now you should have a TWc that can save
 * You need to use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
 
-## nwTWcAppStyle-plugin.js
-The nwTWcAppStyle-plugin.js gives an application like window under nw.js that has the same chrome on Linux and Windows, at present it does not work in a browser.
-
-![Screenshot](https://github.com/nwOkido/nwTWcSaver/blob/master/Images/TWcScreen.png)
-
 ### Tiddlywiki license
 TiddlyWiki is Copyright 2013 UnaMesa Assocation
 It is licensed under a BSD License. See [here](https://github.com/TiddlyWiki/tiddlywiki/blob/master/html/copyright.txt) for the exact terms.
@@ -42,14 +37,7 @@ https://github.com/TiddlyWiki/TiddlyWiki
 * If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
 # nwHive
-Access all your TWc wikis from one wiki.
-This is a proof of concept, more functions will be added, the TWc core has jQuery 3.4.1 and some plugins are modified.
-For installation instructions see here above, just change the filename to nwHive.html in package.json.
-The usage instructions are inculded.
-Be aware that it only runs in nw.js environment.
-
-![Screenshot](https://github.com/nwOkido/nwTWcSaver/blob/master/Images/nwHive.png)
-
+nwHive moved to its own repo https://github.com/nwOkido/nwHive
 
 
 Have a nice day, Okido
