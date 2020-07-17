@@ -1,3 +1,5 @@
+16.07.2020 1.2.8 Changed windows path regex to path.win32.normalize(nw.__filename)
+29.06.2020 1.2.7 If tiddler.text starts with \n it is eaten up during saving, escapeLineBreaks() is required, set config.options.chkUsePreForStorage to false
 26.06.2020 1.2.6 Added "createpath" as an I/O function
 26.05.2020 1.2.5 Fixed "openfile" with default aplication, spaces are handled different on the Linux and Windows command line
 17.05.2020 1.2.4 Fixed saving issue when there are spaces %20 in the filename, use process.platform to detect the platform, name changed to nwSaver-Plugin.js
