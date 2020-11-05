@@ -1,3 +1,4 @@
+27.10.2020 2.0.1 Added a two functions, check if a file/folder exist and rename
 29.08.2020 2.0.0 Renamed functions and added filter options for folders, the old function names can still be used
 16.07.2020 1.2.8 Changed windows path regex to path.win32.normalize(nw.__filename)
 29.06.2020 1.2.7 If tiddler.text starts with \n it is eaten up during saving, escapeLineBreaks() is required, set config.options.chkUsePreForStorage to false
@@ -15,7 +16,7 @@
 10.11.2019 1.1.4 Made some minor changes and added remarks to the source
 19.10.2019 1.1.3 Added tags to make distribution with the LoadTiddlersPlugin easy
 15.09.2019 1.1.2 Minified the plugin code includding the TWc macro code
-16.06.2019 1.1.1 Made backup sequency definable in systemConfig tiddler
+16.06.2019 1.1.1 Made backup sequence definable in systemConfig tiddler
 13.06.2019 1.1.0 Moved the code in the external nwTWcSaver.js into this plugin
 17.04.2019 1.0.6 Added win path coding in nwTWcSaver.js
 02.04.2019 1.0.5 Removed hard coded paths for WinXX
