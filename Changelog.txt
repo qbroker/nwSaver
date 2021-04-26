@@ -1,3 +1,4 @@
+26.04.2021 2.0.2 Added folder deletion to the delete function, folders must be empty
 27.10.2020 2.0.1 Added a two functions, check if a file/folder exist and rename
 29.08.2020 2.0.0 Renamed functions and added filter options for folders, the old function names can still be used
 16.07.2020 1.2.8 Changed windows path regex to path.win32.normalize(nw.__filename)
