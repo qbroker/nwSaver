@@ -37,7 +37,7 @@ https://github.com/TiddlyWiki/TiddlyWiki
 * If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
 ## nwHive
-nwHive moved to its own repo https://github.com/nwOkido/nwHive
+nwHive moved to its own repo https://github.com/nwOkido/nwHive, this is under development.
 
 
 Have a nice day, Okido
