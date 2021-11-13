@@ -3,7 +3,7 @@ Save TiddlyWiki classic in nw.js
 
 ## Steps to install a TWc in nw.js environment
 
-*This readme uses Linux if you are on Windows read Windows were Linux is used.*
+*This readme uses Linux if you are on Windows read Windows where Linux is used.*
 
 1. Download nw.js for your OS, sdk or normal, both will work, https://nwjs.io 
 2. Unzip the downloaded file, you will have a folder like: xxx/nwjs-sdk-v0.38.1-linux-x64 
@@ -23,14 +23,17 @@ Save TiddlyWiki classic in nw.js
 * Now you should have a TWc that can save
 * You need to use a TWc that has already the nwSaver-Plugin.js installed during loading, else saving is not possible
 
-### Tiddlywiki license
+### TiddlyWiki license
 TiddlyWiki is Copyright 2013 UnaMesa Assocation
 It is licensed under a BSD License. See [here](https://github.com/TiddlyWiki/tiddlywiki/blob/master/html/copyright.txt) for the exact terms.
 
-### Tiddlywiki @ Google groups
+### TiddlyWiki @ Google groups
 https://groups.google.com/forum/#!forum/tiddlywikiclassic
-### Tiddlywiki @ Github
+### TiddlyWiki @ Github
 https://github.com/TiddlyWiki/TiddlyWiki
+
+### TiddlyWiki classis
+https://classic.tiddlywiki.com/
 
 ## nw.js
 * In package.json the path to the wiki is defined in "main": "./data/nwSaver.html"
