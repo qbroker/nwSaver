@@ -1,33 +1,34 @@
+12.12.2021 2.1.0 Path separators are by default Posix "/" style, optional is Windows "\\" style, use "win32" to invoke this 
 13.11.2021 2.0.9 Fixed a problem with special characters in path and filenames that give a normalization error
 07.08.2021 2.0.8 Added path normalization to all functions, to prevent problems on windows systems
 16.07.2021 2.0.7 Checked possible several spaces issue in windows filenames, files can not be opened with the default application, no problems found
-28.05.2021 2.0.6 Fixed spaces problem on windows, no limit anymore for number of spaces in a path
+28.05.2021 2.0.6 Fixed spaces problem on windows, no limit anymore for number of spaces in a path 
 23.05.2021 2.0.5 Fixed some typos
 16.05.2021 2.0.4 Fixed opening of paths with more than two spaces once more
 04.05.2021 2.0.3 Fixed opening of paths with spaces
 26.04.2021 2.0.2 Added folder deletion to the delete function, folders must be empty
 27.10.2020 2.0.1 Added a two functions, check if a file/folder exist and rename
 29.08.2020 2.0.0 Renamed functions and added filter options for folders, the old function names can still be used
-16.07.2020 1.2.8 Changed windows path regex to path.win32.normalize(nw.__filename)
+16.07.2020 1.2.8 Changed windows path regex to <nowiki>path.win32.normalize(nw.__filename)</nowiki>
 29.06.2020 1.2.7 If tiddler.text starts with \n it is eaten up during saving, escapeLineBreaks() is required, set config.options.chkUsePreForStorage to false
 26.06.2020 1.2.6 Added "createpath" as an I/O function
 26.05.2020 1.2.5 Fixed "openfile" with default aplication, spaces are handled different on the Linux and Windows command line
 17.05.2020 1.2.4 Fixed saving issue when there are spaces %20 in the filename, use process.platform to detect the platform, name changed to nwSaver-Plugin.js
-10.05.2020 1.2.3 Added a function to open a file with the default application
+10.05.2020 1.2.3 Added a function to open a file with the default application 
 05.05.2020 1.2.2 Fixed the texts used for error warnings
 05.04.2020 1.2.1 Modified and created bug removed, mtime and ctime are properly mapped now
 28.03.2020 1.2.0 Renamed function names, added functions to copy and delete files
 10.03.2020 1.1.8 Added decodeURI, special characters need special encoding
 08.03.2020 1.1.7 Added basic I/O functions
 16.02.2020 1.1.6 Removed save function encapsulation, the saver can be used by other functions too
-03.01.2020 1.1.5 Fixed the first load view/edit mode problem
+03.01.2020 1.1.5 Fixed the first load view/edit mode problem 
 10.11.2019 1.1.4 Made some minor changes and added remarks to the source
-19.10.2019 1.1.3 Added tags to make distribution with the LoadTiddlersPlugin easy
-15.09.2019 1.1.2 Minified the plugin code includding the TWc macro code
+19.10.2019 1.1.3 Added tags to make distribution with the [[LoadTiddlersPlugin]] easy
+15.09.2019 1.1.2 Minified the plugin code includding the <nowiki>TWc</nowiki> macro code
 16.06.2019 1.1.1 Made backup sequence definable in systemConfig tiddler
 13.06.2019 1.1.0 Moved the code in the external nwTWcSaver.js into this plugin
 17.04.2019 1.0.6 Added win path coding in nwTWcSaver.js
-02.04.2019 1.0.5 Removed hard coded paths for WinXX
+02.04.2019 1.0.5 Removed hard coded paths for <nowiki>WinXX</nowiki>
 10.03.2019 1.0.4 Updated documentation and fixed date format
 25.02.2019 1.0.3 Removed moment.js dependency
 22.02.2019 1.0.2 Added win32 path fix
