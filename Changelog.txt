@@ -1,3 +1,5 @@
+27.08.2022 2.2.2 Paths are now build with path.resolve to ensure proper paths on Windows
+20.08.2022 2.2.0 To open files from windows command line "&" needs to be escaped to "^&", this is added
 12.12.2021 2.1.0 Path separators are by default Posix "/" style, optional is Windows "\\" style, use "win32" to invoke this 
 13.11.2021 2.0.9 Fixed a problem with special characters in path and filenames that give a normalization error
 07.08.2021 2.0.8 Added path normalization to all functions, to prevent problems on windows systems

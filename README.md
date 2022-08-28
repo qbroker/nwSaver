@@ -1,14 +1,14 @@
 # nwSaver
-Save TiddlyWiki classic in nw.js
+Save TiddlyWiki classic in NW.js
 
-## Steps to install a TWc in nw.js environment
+## Steps to install a TWc in NW.js environment
 
 *This readme uses Linux if you are on Windows read Windows where Linux is used.*
 
-1. Download nw.js for your OS, sdk or normal, both will work, https://nwjs.io 
-2. Unzip the downloaded file, you will have a folder like: xxx/nwjs-sdk-v0.38.1-linux-x64 
+1. Download NW.js for your OS, sdk or normal, both will work, https://nwjs.io
+2. Unzip the downloaded file, you will have a folder like: xxx/nwjs-sdk-v0.38.1-linux-x64
 3. Download the files from Github, the green button "Clone or download"
-4. Unzip the downloaded nwSaver-master.zip 
+4. Unzip the downloaded nwSaver-master.zip
 5. Copy package.json from nwSaver-master to xxx/nwjs-sdk-v0.38.1-linux-x64
 6. Create a folder named data in xxx/nwjs-sdk-v0.38.1-linux-x64, so you get xxx/nwjs-sdk-v0.38.1-linux-x64/data
 7. Copy nwSaver.html from nwSaver-master to xxx/nwjs-sdk-v0.38.1-linux-x64/data
