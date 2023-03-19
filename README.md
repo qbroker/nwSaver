@@ -39,7 +39,7 @@ https://github.com/TiddlyWiki/TiddlyWiki
 ### TiddlyWiki classic
 https://classic.tiddlywiki.com/
 
-## nw.js
+## NW.js
 * In package.json the path to the wiki is defined in "main": "./data/nwSaver.html"
 * If you edit package.json make sure to be accurate, any typo causes a failure during startup
 
