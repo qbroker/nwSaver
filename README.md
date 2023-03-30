@@ -6,7 +6,7 @@ https://qbroker.github.io/nwSaver/
 
 ## hiveBroker
 To make your life easier there is hiveBroker-Plugin.js that comes as a zip file for Linux or Windows, download, unpack and start using TiddlyWiki classic.
-`hiveBroker` can be found here https://github.com/qbroker/nwHive.
+`hiveBroker` can be found [here](https://github.com/qbroker/hiveBroker).
 
 ### TiddlyWiki classic license
 TiddlyWiki is Copyright 2013 UnaMesa Assocation
