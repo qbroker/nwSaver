@@ -21,7 +21,7 @@ https://github.com/TiddlyWiki/TiddlyWikiClassic
 https://classic.tiddlywiki.com/
 
 
-Comments are appreciated and if you like this project, give it a :star: :star: :star:
+Comments are appreciated and if you like this project, give it a :star:
 
 
 Have a nice day, Okido
