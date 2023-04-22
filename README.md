@@ -9,16 +9,13 @@ Go to [hiveBroker](https://github.com/qbroker/hiveBroker), download `hiveBroker`
 TiddlyWiki is Copyright 2013 UnaMesa Assocation
 It is licensed under a BSD License. See [here](https://github.com/TiddlyWiki/TiddlyWikiClassic/blob/master/html/copyright.txt) for the exact terms.
 
-### TiddlyWikiClassic @ Google groups [link](https://groups.google.com/forum/#!forum/tiddlywikiclassic)
+### TiddlyWikiClassic @ Google groups [click here](https://groups.google.com/forum/#!forum/tiddlywikiclassic)
 
-### TiddlyWikiClassic @ Google groups
-https://groups.google.com/forum/#!forum/tiddlywikiclassic
+### TiddlyWikiClassic @ Google groups [click here](https://groups.google.com/forum/#!forum/tiddlywikiclassic)
 
-### TiddlyWikiClassic @ Github
-https://github.com/TiddlyWiki/TiddlyWikiClassic
+### TiddlyWikiClassic @ Github [click here](https://github.com/TiddlyWiki/TiddlyWikiClassic)
 
-### TiddlyWikiClassic as a website
-https://classic.tiddlywiki.com/
+### TiddlyWikiClassic as a website [click here](https://classic.tiddlywiki.com/)
 
 
 Comments are appreciated and if you like this project, give it a :star:
