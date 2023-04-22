@@ -1,24 +1,25 @@
 # nwSaver
-Save TiddlyWiki classic in NW.js with this plugin.
+The nwSaver-Plugin.js provides a saver for TiddlyWikiClassic that is running in a NW.js environment.
+The [TiddlyWikiClassic](https://github.com/qbroker/nwSaver) in this GitHub repo has the plugin loaded and works out of the box.
 
-## nwSaver-Plugin.js, open in browser
-https://qbroker.github.io/nwSaver/
+## How to get TiddlyWikiClassic running in a NW.js environment?
+Go to https://github.com/qbroker/hiveBroker, download `hiveBroker` and follow the instructions. 
+`hiveBroker` comes as a zip file for Linux or Windows, everything is included in the zip file.
 
-## hiveBroker
-To make your life easier there is hiveBroker-Plugin.js that comes as a zip file for Linux or Windows, download, unpack and start using TiddlyWiki classic.
-`hiveBroker` can be found [here](https://github.com/qbroker/hiveBroker).
-
-### TiddlyWiki classic license
+## TiddlyWikiClassic license
 TiddlyWiki is Copyright 2013 UnaMesa Assocation
 It is licensed under a BSD License. See [here](https://github.com/TiddlyWiki/tiddlywiki/blob/master/html/copyright.txt) for the exact terms.
 
-### TiddlyWiki classic @ Google groups
+### TiddlyWikiClassic @ Google groups
 https://groups.google.com/forum/#!forum/tiddlywikiclassic
 
-### TiddlyWiki classic @ Github
-https://github.com/TiddlyWiki/TiddlyWiki
+### TiddlyWikiClassic @ Google groups
+https://groups.google.com/forum/#!forum/tiddlywikiclassic
 
-### TiddlyWiki classic
+### TiddlyWikiClassic @ Github
+https://github.com/TiddlyWiki/TiddlyWikiClassic
+
+### TiddlyWikiClassic as a website
 https://classic.tiddlywiki.com/
 
 
