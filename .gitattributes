@@ -1,1 +1,3 @@
 nwSaver.html linguist-language=Javascript
+
+*.html linguist-detectable=true
