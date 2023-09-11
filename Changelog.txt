@@ -1,3 +1,5 @@
+10.09.2023 2.2.7 Added message if file save is successful
+25.06.2023 2.2.6 Changed the build process to the latest pluginBuilder format
 22.04.2023 2.2.5 Renamed all variations of TiddlyWiki... to [[TiddlyWikiClassic]]
 06.10.2022 2.2.4 Fix bug, function normalize does not exist when the native saver macro is used
 27.08.2022 2.2.2 Paths are now build with path.resolve to ensure proper paths on Windows
