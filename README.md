@@ -1,6 +1,6 @@
 ## nwSaver
 The nwSaver-Plugin.js provides a saver for TiddlyWikiClassic that is running in a NW.js environment.\
-This GitHub repo only holds the latest version of the nwSaver-Plugin.js.
+This GitHub repository only holds the latest version of the nwSaver-Plugin.js.
 
 ## How to get TiddlyWikiClassic running in a NW.js environment?
 Go to [hiveBroker](https://github.com/qbroker/hiveBroker) and download `hiveBroker`, follow the instructions to install.\
