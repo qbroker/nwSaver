@@ -1,3 +1,4 @@
+17.03.2024 2.2.10 Update TWC core to 2.10.1, has no effect on the plugin
 22.12.2023 2.2.10 Removed some console.log() messages
 04.11.2023 2.2.9 Fix a load and save bug when there are spaces in the path
 28.10.2023 2.2.8 Change this reference for button onclick handlers  
