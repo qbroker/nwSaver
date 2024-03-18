@@ -6,7 +6,7 @@ This GitHub repository only holds the latest version of the nwSaver-Plugin.js.
 Go to [hiveBroker](https://github.com/qbroker/hiveBroker) and download `hiveBroker`, follow the instructions to install.\
 `hiveBroker` comes as a zip file for Linux and Windows, NW.js is included and it runs out of the box. :heavy_check_mark:
 
-##Todo
+## Todo
 Change all JavaScript code in the nwSaver-Plugin.js to execute a-sync. 
 
 ### TiddlyWikiClassic license :copyright:
