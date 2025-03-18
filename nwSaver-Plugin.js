@@ -2,17 +2,17 @@
 |Title |nwSaver-Plugin.js |
 |Description |This is a saver plugin for [[TiddlyWikiClassic]] running with [[NW.js]] |
 |Documentation | |
-|Version |2.2.10 |
+|Version |2.2.11 |
 |Version library | |
 |Plugin type |systemConfig |
 |Source |nwSaver-Source |
 |Author |Okido |
 |Original author | |
 |License | |
-|Core version |≥2.9.0 |
+|Core version |≥2.9.4 |
 |Browser |A modern browser supporting ES6 or [[NW.js]] |
 |Status |EXPERIMENTAL - SUBJECT TO CHANGE |
-|Build date - time |22-12-2023 - 16:27, build with [[pluginBuilder-Plugin.js]] |
+|Build date - time |18-03-2025 - 20:28, build with [[pluginBuilder-Plugin.js]] |
 
 !!!Documentation
 <<<
@@ -22,7 +22,7 @@ When running in a browser the default [[TiddlyWikiClassic]] saver is used.
 <<<
 !!!Usage
 <<<
-!Avaiable functions in this plugin
+!Available functions in this plugin
 config.macros.nwsaver.direntries(folderPath) >> returns an object with the key/value for folder path and the entries in an array, in Posix style "/"
 config.macros.nwsaver.direntriesattr(folderPath, "posix") >> returns an object with the file and folder attributes, default is Posix style with "/", alternative is Windows with "\\", invoked with "win32"
 config.macros.nwsaver.direntriesattrfilter(folderPath, "dir" || "file" || "") >> filter by dir, file or no filter
@@ -31,10 +31,12 @@ config.macros.nwsaver.save(fullPath, content, message = true or false) >> save a
 config.macros.nwsaver.copy(fullPathSource, fullPathTarget) >> copies a file
 config.macros.nwsaver.delete(fullPath) >> delete a file or folder
 config.macros.nwsaver.openfile(fullPath) >> open a file with the default application
-config.macros.nwsaver.createpath(fullPath) >> create a path
 config.macros.nwsaver.exist(fullPath) >> check if the file/folder exist
 config.macros.nwsaver.rename(fullPathSource, fullPathTarget) >> rename a file
 config.macros.nwsaver.normalizepath(fullPath) >> normalize a path following os rules, Posix "/" and Windows "\\" 
+config.macros.nwsaver.mkdir(fullPath) >> create a path
+!Future obsolete features
+config.macros.nwsaver.createpath(fullPath) >> create a path, this function will be replaced by config.macros.nwsaver.mkdir(fullPath)
 <<<
 !!!Configuration
 <<<
@@ -54,6 +56,7 @@ chkHttpReadOnly: false;
 <<<
 !!!Revisions
 <<<
+18.03.2025 2.2.11 Fixed a problem with the return value of ...direntriesattr(folderPath, "win32"), now it correctly returns with "\\"
 22.12.2023 2.2.10 Removed some console.log() messages
 04.11.2023 2.2.9 Fix a load and save bug when there are spaces in the path
 28.10.2023 2.2.8 Change this reference for button onclick handlers  
@@ -101,10 +104,10 @@ chkHttpReadOnly: false;
 <<<
 !!!License
 <<<
-!!License for the third party library code
+!!License for the TiddlyWikiClassic plugin code
 MIT License
 
-Copyright (c) 2023 Okido
+Copyright (c) 2025 Okido
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -130,7 +133,7 @@ Backup logic based on the code from [[LessBackupsPlugin]] by Simon Baird, http:/
 ***/
 //{{{
 /* JavaScript CODE STARTS HERE */
-/* Minified with Terser.js - 22-12-2023 */
-"use strict";config.options.chkUsePreForStorage=!1,"object"!=typeof config.macros.nwsaver?config.macros.nwsaver={}:config.macros.nwsaver,config.macros.nwsaver={commandline:function(){switch(process.platform){case"darwin":return"open";case"win32":case"win64":return"start";default:return"xdg-open"}},openfile:function(e){const r=require("fs"),i=require("path"),n=require("child_process").exec;if("win32"===process.platform){const t=r.existsSync(e);e=(e=(e=i.resolve(nw.__dirname,e)).replace(/(\s+)/g,(e=>`"${e}"`))).replace(/&/g,"^&"),t?n(this.commandline()+" "+e):this.error("openfile",`${t} not found`)}else{e=i.resolve(nw.__dirname,e);let t=r.existsSync(e);t?n(this.commandline()+' "'+e+'"'):this.error("openfile",`${e} not found`)}},handler:function(e,r,i,n,t,o){createTiddlyButton(e,"Save","Save your TiddlyWikiClassic",this.onclick,"button saveChangesButton")},onclick:function(){if(!("object"==typeof nw))return saveChanges(),!1;{require("fs"),require("path");const e=new Date,r=config.options.nwSaver||[["YYYY"],["MMM"],["ddd"],["latest",0]],i=config.macros.nwsaver,n=i.normalizepath(nw.__filename);let t=i.normalizepath(getBackupPath(n));const o=i.load(n),s=locateStoreArea(o),a=updateOriginal(o,s,n);i.save(n,a,!1);let c=r.map((r=>t.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,"$1"+e.formatString(r[0]).toLowerCase()+"$3")));c.forEach((e=>i.save(e,a,!1))),displayMessage(`File and backups saved @ ${e.formatString("0hh:0mm")}`,void 0,{use:!0,color:"green",duration:"3000"})}},save:function(e,r,i=!0){const n=require("fs"),t=require("path");e="win32"===process.platform?e:decodeURI(e),e=t.resolve(nw.__dirname,e);let o=t.dirname(e);try{n.existsSync(o)||n.mkdirSync(o,{recursive:!0}),n.writeFile(e,r,(r=>{r?displayMessage(r,void 0,{use:!0,color:"red",duration:"3000"}):i&&displayMessage(`File ${e} saved`,void 0,{use:!0,color:"green",duration:"5000"})}))}catch(e){this.error("save",e)}},direntriesattrfilter:function(e,r=""){const i=config.macros.nwsaver.direntriesattr(e);switch(r){case"dir":return i.filter((e=>e.isdir));case"file":return i.filter((e=>e.isfile));default:return i}},direntriesattr:function(e,r="posix"){const i=require("fs"),n=require("path"),t=e=>i.lstatSync(e),o=(n.resolve(nw.__dirname,e),this.direntries(e));try{return o.direntries.map((e=>{let i=decodeURI(encodeURI(n.posix.normalize(o.dirpath+e))),s=decodeURI(encodeURI(n.posix.normalize(i))),a=decodeURI(encodeURI(n.posix.normalize(o.dirpath)));return"win32"===r&&(i=n.win32.normalize(i),s=n.win32.normalize(i),a=n.win32.normalize(o.dirpath)),{filename:e,dirpath:a,fullpath:s,accessed:t(i).atime,modified:t(i).mtime,created:t(i).ctime,isfile:t(i).isFile(),isdir:t(i).isDirectory(),extension:n.parse(e).ext}}))}catch(e){this.error("direntriesattr",e)}},direntries:function(e){const r=require("fs"),i=require("path");try{return{dirpath:decodeURI(encodeURI(i.posix.normalize(e))),direntries:r.readdirSync(i.resolve(nw.__dirname,e))}}catch(e){this.error("direntries",e)}},rename:function(e,r){const i=require("fs"),n=require("path");let t=n.resolve(nw.__dirname,e),o=n.resolve(nw.__dirname,r);try{return!(!i.existsSync(t)||i.existsSync(o))&&(i.renameSync(t,o),!0)}catch(e){this.error("rename",e)}},delete:function(e){const r=require("fs");let i=require("path").resolve(nw.__dirname,e),n=r.existsSync(i)&&r.lstatSync(i).isDirectory(),t=r.existsSync(i)&&r.lstatSync(i).isFile();try{if(t)return r.unlinkSync(i),!0;if(n)return r.rmdirSync(i,{recursive:!0}),!0}catch(e){this.error("delete",e)}},load:function(e){const r=require("fs"),i=require("path");config.macros.nwsaver;e="win32"===process.platform?e:decodeURI(e);let n=i.resolve(nw.__dirname,e);try{return r.readFileSync(n,{encoding:"utf8"})}catch(e){this.error("load",e)}},copy:function(e,r){const i=require("fs"),n=require("path");let t=n.resolve(nw.__dirname,e),o=n.resolve(nw.__dirname,r);try{return i.copyFileSync(t,o)}catch(e){this.error("copy",e)}},createpath:function(e){const r=require("fs");let i=require("path").resolve(nw.__dirname,e);try{!1===r.existsSync(i)&&r.mkdirSync(i,{recursive:!0})}catch(e){this.error("createpath",e)}},exist:function(e){const r=require("fs"),i=require("path");try{return!!r.existsSync(i.resolve(nw.__dirname,e))}catch(e){this.error("exist",e)}},error:function(e,r){alert(`An error occured in function ${e} of the nwSaver-Plugin.js\n${JSON.stringify(r,2,"\t")}`)},normalizepath:function(e){const r=require("path");return"win32"===process.platform?decodeURI(encodeURI(r.win32.normalize(e))):decodeURI(encodeURI(r.posix.normalize(e)))}};
+/* Minified with Terser.js - 18-03-2025 */
+"use strict";config.options.chkUsePreForStorage=!1,"object"==typeof nw?("object"!=typeof config.macros.nwsaver?config.macros.nwsaver={}:config.macros.nwsaver,config.macros.nwsaver={init:function(){this.os=process.platform},os:"linux",fs:require("fs"),path:require("path"),exec:require("child_process").exec,commandline:function(){switch(this.os){case"darwin":return"open";case"win32":return"start";default:return"xdg-open"}},openfile:function(e){e=this.path.resolve(nw.__dirname,e);let t=this.fs.existsSync(e);"win32"===this.os?(e=(e=e.replace(/(\s+)/g,(e=>`"${e}"`))).replace(/&/g,"^&"),t?this.exec(this.commandline()+" "+e):this.error("openfile",`${t} not found`)):t?this.exec(this.commandline()+' "'+e+'"'):this.error("openfile",`${e} not found`)},handler:function(e,t,i,r,s,n){createTiddlyButton(e,"Save","Save your TiddlyWikiClassic in Development",this.onclick,"button saveChangesButton")},onclick:function(){const e=new Date,t=config.macros.nwsaver,i=config.options.nwsaver||[["YYYY"],["MMM"],["ddd"],["latest",0]],r=t.normalizepath(nw.__filename);let s=t.normalizepath(getBackupPath(r));const n=t.load(r),o=locateStoreArea(n),a=updateOriginal(n,o,r);t.save(r,a,!1);let c=i.map((t=>s.replace(/(\.)([0-9]+\.[0-9]+)(\.html)$/,"$1"+e.formatString(t[0]).toLowerCase()+"$3")));c.forEach((e=>t.save(e,a,!1))),displayMessage(`File and backups saved @ ${e.formatString("0hh:0mm")}`,void 0,{use:!0,color:"green",duration:"3000"})},save:function(e,t,i=!0){e="win32"===this.os?e:decodeURI(encodeURI(e)),e=this.path.resolve(nw.__dirname,e);let r=this.path.dirname(e);try{this.fs.existsSync(r)||this.fs.mkdirSync(r,{recursive:!0}),this.fs.writeFile(e,t,(t=>{t?displayMessage(t,void 0,{use:!0,color:"red",duration:"3000"}):i&&displayMessage(`File ${e} saved`,void 0,{use:!0,color:"green",duration:"5000"})}))}catch(e){this.error("save",e)}},direntriesattrfilter:function(e,t=""){const i=config.macros.nwsaver.direntriesattr(e);switch(t){case"dir":return i.filter((e=>e.isdir));case"file":return i.filter((e=>e.isfile));default:return i}},direntriesattr:function(e,t="posix"){const i=e=>this.fs.lstatSync(e),r=(this.path.resolve(nw.__dirname,e),this.direntries(e));try{return r.direntries.map((e=>{let s=decodeURI(encodeURI(this.path.posix.normalize(r.dirpath+e))),n=decodeURI(encodeURI(this.path.posix.normalize(s))),o=decodeURI(encodeURI(this.path.posix.normalize(r.dirpath)));return{filename:e,dirpath:"posix"===t?o:this.path.win32.normalize(o),fullpath:"posix"===t?n:this.path.win32.normalize(n),accessed:i(s).atime,modified:i(s).mtime,created:i(s).ctime,isfile:i(s).isFile(),isdir:i(s).isDirectory(),extension:this.path.parse(e).ext}}))}catch(e){this.error("direntriesattr",e)}},direntries:function(e){try{return{dirpath:decodeURI(encodeURI(this.path.posix.normalize(e))),direntries:this.fs.readdirSync(this.path.resolve(nw.__dirname,e))}}catch(e){this.error("direntries",e)}},rename:function(e,t){let i=this.path.resolve(nw.__dirname,e),r=this.path.resolve(nw.__dirname,t);try{return!(!this.fs.existsSync(i)||this.fs.existsSync(r))&&(this.fs.renameSync(i,r),!0)}catch(e){this.error("rename",e)}},delete:function(e){let t=this.path.resolve(nw.__dirname,e),i=this.fs.existsSync(t)&&this.fs.lstatSync(t).isDirectory(),r=this.fs.existsSync(t)&&this.fs.lstatSync(t).isFile();try{if(r)return this.fs.unlinkSync(t),displayMessage(`Deleted ${t}`,void 0,{use:!0,color:"yellow",duration:"5000"}),!0;if(i)return this.fs.rmdirSync(t,{recursive:!0}),displayMessage(`Deleted ${t}`,void 0,{use:!0,color:"yellow",duration:"5000"}),!0}catch(e){this.error("delete",e)}},load:function(e){e="win32"===this.os?e:decodeURI(e);let t=this.path.resolve(nw.__dirname,e);try{return this.fs.readFileSync(t,{encoding:"utf8"})}catch(e){this.error("load",e)}},copy:function(e,t){let i=this.path.resolve(nw.__dirname,e),r=this.path.resolve(nw.__dirname,t);try{return this.fs.copyFileSync(i,r)}catch(e){this.error("copy",e)}},createpath:function(e){this.mkdir(e)},mkdir:function(e){let t=this.path.resolve(nw.__dirname,e);try{!1===this.fs.existsSync(t)&&this.fs.mkdirSync(t,{recursive:!0})}catch(e){this.error("mkdir",e)}},exist:function(e){try{return!!this.fs.existsSync(this.path.resolve(nw.__dirname,e))}catch(e){this.error("exist",e)}},error:function(e,t){alert(`An error occured in function ${e} of the nwSaver-Plugin.js\nError message:\n${JSON.stringify(t,2,"\t")}`)},normalizepath:function(e){return"win32"===this.os?decodeURI(encodeURI(this.path.win32.normalize(e))):decodeURI(encodeURI(this.path.posix.normalize(e)))}}):(console.log("We are in a browser!!!"),"object"!=typeof config.macros.nwsaver?config.macros.nwsaver={}:config.macros.nwsaver,config.macros.nwsaver={handler:function(e,t,i,r,s,n){createTiddlyButton(e,"Save-DEV","Save your TiddlyWikiClassic in Development",this.onclick,"button saveChangesButton")},onclick:function(){return saveChanges(),!1}});
 /* JavaScript CODE ENDS HERE */
 //}}}

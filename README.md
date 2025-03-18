@@ -7,7 +7,7 @@ Go to [hiveBroker](https://github.com/qbroker/hiveBroker) and download `hiveBrok
 `hiveBroker` comes as a zip file for Linux and Windows, NW.js is included and it runs out of the box. :heavy_check_mark:
 
 ## Todo
-Change all JavaScript code in the nwSaver-Plugin.js to execute a-sync. 
+Change all JavaScript code in the nwSaver-Plugin.js to execute async. 
 
 ### TiddlyWikiClassic license :copyright:
 TiddlyWiki is Copyright 2013 UnaMesa Assocation.\
